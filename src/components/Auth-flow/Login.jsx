@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import ForgotPasswordModal from "./ForgotPasswordModal";
+import EmailConfirmationModal from "./EmailConfirmationModal";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 const slides = [
   {
@@ -28,6 +31,16 @@ const slides = [
 
 function Login() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [modalState, setModalState] = useState({
+    showForgotPassword: false,
+    showEmailConfirmation: false,
+    showResetPassword: false,
+    email: "",
+  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -48,6 +61,73 @@ function Login() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  const openForgotPasswordModal = () => {
+    setModalState((prev) => ({ ...prev, showForgotPassword: true }));
+  };
+
+  const closeForgotPasswordModal = () => {
+    setModalState((prev) => ({ ...prev, showForgotPassword: false }));
+  };
+
+  const handleForgotPasswordSubmit = (email) => {
+    setModalState((prev) => ({
+      ...prev,
+      email,
+      showForgotPassword: false,
+      showEmailConfirmation: true,
+    }));
+  };
+
+  const closeEmailConfirmationModal = () => {
+    setModalState((prev) => ({ ...prev, showEmailConfirmation: false }));
+  };
+
+  const handleEmailConfirmationSubmit = () => {
+    setModalState((prev) => ({
+      ...prev,
+      showEmailConfirmation: false,
+      showResetPassword: true,
+    }));
+  };
+
+  const closeResetPasswordModal = () => {
+    setModalState((prev) => ({
+      ...prev,
+      showResetPassword: false,
+      email: "",
+    }));
+  };
+
+  const handleResetPasswordSubmit = () => {
+    // Reset password logic here
+    closeResetPasswordModal();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (json.token) localStorage.setItem('token', json.token);
+        // Redirect on success
+        window.location.href = '/';
+      } else {
+        setError(json.message || `Login failed (${res.status})`);
+      }
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen relative bg-white">
       {/* Logo */}
@@ -58,6 +138,28 @@ function Login() {
           className="w-8 h-8 sm:w-10 sm:h-10"
         />
       </div>
+
+      {/* Modals */}
+      {modalState.showForgotPassword && (
+        <ForgotPasswordModal
+          onClose={closeForgotPasswordModal}
+          onSubmit={handleForgotPasswordSubmit}
+        />
+      )}
+      {modalState.showEmailConfirmation && (
+        <EmailConfirmationModal
+          email={modalState.email}
+          onClose={closeEmailConfirmationModal}
+          onSubmit={handleEmailConfirmationSubmit}
+        />
+      )}
+      {modalState.showResetPassword && (
+        <ResetPasswordModal
+          email={modalState.email}
+          onClose={closeResetPasswordModal}
+          onSubmit={handleResetPasswordSubmit}
+        />
+      )}
 
       {/* Left Side - Slider */}
       <div className="hidden sm:flex w-full lg:flex-1 h-64 sm:h-96 lg:h-screen relative overflow-hidden bg-gray-100 order-2 lg:order-1">
@@ -126,7 +228,7 @@ function Login() {
           </p>
 
           {/* Form */}
-          <form className="w-full">
+          <form className="w-full" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div className="mb-4 sm:mb-6">
               <label className="block text-sm sm:text-base lg:text-[16px] text-[#768C9F] font-medium font-pop mb-2">
@@ -134,6 +236,8 @@ function Login() {
               </label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="johndoe@gmail.com"
                 className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
@@ -147,21 +251,34 @@ function Login() {
               </label>
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
               />
               <small className="block text-xs sm:text-[14px] text-[#768C9F] font-medium font-pop mt-2 sm:mt-3">
-                Forgot Password
+                <button
+                  type="button"
+                  onClick={openForgotPasswordModal}
+                  className="text-[#DDA04E] hover:underline transition-all duration-200"
+                >
+                  Forgot Password?
+                </button>
               </small>
             </div>
 
             {/* Submit Button */}
+            {error && (
+              <p className="text-red-500 text-xs sm:text-sm font-inter mb-2">{error}</p>
+            )}
+
             <button
               type="submit"
-              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 mb-3 sm:mb-4 font-pop"
+              disabled={loading}
+              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 mb-3 sm:mb-4 font-pop"
             >
-              Log In
+              {loading ? 'Signing in...' : 'Log In'}
             </button>
 
             {/* Login Link Bottom */}
