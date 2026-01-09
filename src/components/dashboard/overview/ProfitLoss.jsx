@@ -1,36 +1,79 @@
-export default function ProfitLoss() {
+const ProfitLoss = () => {
+  const data = [
+    { month: "Jan", profit: 70, loss: 30 },
+    { month: "Feb", profit: 75, loss: 25 },
+    { month: "Mar", profit: 68, loss: 32 },
+    { month: "Apr", profit: 80, loss: 55 },
+    { month: "May", profit: 85, loss: 90 },
+    { month: "Jun", profit: 78, loss: 103 },
+  ];
+
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm">
-      <div className="flex justify-between mb-6">
+    <div className="border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm p-[38px]">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-[38px]">
         <div>
-          <h3 className="font-semibold">Profit and Loss</h3>
-          <p className="text-sm text-gray-400">
+          <h2 className="text-[24px] font-bold text-[#0F172B]">
+            Profit and Loss
+          </h2>
+          <p className="text-[16px] text-[#62748E]">
             View your income in a certain period of time
           </p>
         </div>
 
-        <div className="flex gap-4 text-xs">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-            Profit
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-gray-900 rounded-full" />
-            Loss
-          </span>
+        {/* Legend */}
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#D9A441]" />
+            <span className="text-[#45556C] text-[16px]">Profit</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#1E293B]" />
+            <span className="text-[#45556C] text-[16px]">Loss</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-end justify-between h-48 gap-4">
-        {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m) => (
-          <div key={m} className="flex flex-col items-center gap-2">
-            <div className="relative w-6 h-36 bg-yellow-400 rounded-full">
-              <div className="absolute top-0 w-full h-6 bg-gray-900 rounded-full" />
+      {/* Chart */}
+      <div className="flex items-end justify-between px-4">
+        {data.map((item) => {
+          const total = item.profit + item.loss;
+          const profitHeight = (item.profit / total) * 100;
+          const lossHeight = (item.loss / total) * 100;
+
+          return (
+            <div
+                key={item.month}
+                className="flex flex-col items-center gap-3"
+                >
+                {/* Bar */}
+                <div className="relative w-6 h-[270px] flex flex-col justify-end">
+                    
+                    {/* Loss */}
+                    <div
+                    style={{ height: `${lossHeight}%` }}
+                    className="bg-[#1E293B] rounded-t-full"
+                    />
+
+                    {/* Profit */}
+                    <div
+                    style={{ height: `${profitHeight}%` }}
+                    className="bg-[#DDA04E] "
+                    />
+
+                </div>
+
+                {/* Month */}
+                <span className="text-sm text-slate-400">
+                    {item.month}
+                </span>
             </div>
-            <span className="text-xs text-gray-400">{m}</span>
-          </div>
-        ))}
+
+          );
+        })}
       </div>
     </div>
   );
-}
+};
+
+export default ProfitLoss;

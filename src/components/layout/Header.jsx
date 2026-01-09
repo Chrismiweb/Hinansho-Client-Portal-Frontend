@@ -4,7 +4,7 @@ export default function Header() {
       {/* Left: Greeting */}
       <div>
         <h1 className="text-[24px] font-semibold text-[#0F172B] flex items-center gap-2">
-          Good morning, Alex! <span>👋</span>
+          Good morning, Chrismi! <span>👋</span>
         </h1>
         <p className="text-sm text-[#62748E]">
           Here is what’s happening with your portfolio today.
