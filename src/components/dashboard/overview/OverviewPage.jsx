@@ -14,7 +14,7 @@ export default function OverviewPage() {
             {/* Profit & Loss */}
             <ProfitLoss />
         </div>
-        <div className="w-[25%]">
+        <div className="w-[27%]">
         <StatsCard />
         </div>
     </div>

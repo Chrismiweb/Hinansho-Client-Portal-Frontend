@@ -1,3 +1,6 @@
+import React from 'react';
+import { TbBuildingSkyscraper } from "react-icons/tb";
+import { RiPieChartLine } from "react-icons/ri";
 const StatsCard = () => {
   const stats = {
     rental: 9560,
@@ -13,7 +16,7 @@ const StatsCard = () => {
   const offset = circumference - (rentalPercent / 100) * circumference;
 
   return (
-    <div className="border-2 border-[#F1F5F9] rounded-3xl shadow-sm p-6 w-full max-w-sm">
+    <div className="border-2 bg-white border-[#F1F5F9] rounded-3xl shadow-sm p-6 w-full max-w-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold text-slate-900">Statistics</h2>
@@ -65,41 +68,41 @@ const StatsCard = () => {
       {/* Breakdown cards */}
       <div className="space-y-4">
         {/* Rental */}
-        <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-[#F8FAFC] rounded-2xl p-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-slate-200">
-              🏢
+            <div className="p-2 rounded-full bg-slate-200">
+                <TbBuildingSkyscraper className="text-[#45556C] text-[24px]" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-[16px] text-slate-900">
                 Rental Income
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-[13px] text-[#62748E]">
                 {Math.round(rentalPercent)}% of total
               </p>
             </div>
           </div>
-          <p className="font-bold text-slate-900">
+          <p className="font-bold text-[18px] text-slate-900">
             ${stats.rental.toLocaleString()}
           </p>
         </div>
 
         {/* Investments */}
-        <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-[#F8FAFC] rounded-2xl p-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-full bg-[#F3E3C2]">
-              📈
+            <div className="p-2 rounded-full bg-[#DDA04E33]">
+                <RiPieChartLine className="text-[#DDA04E] text-[24px]" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-[16px] text-slate-900">
                 Investments
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-[13px] text-[#62748E]">
                 {100 - Math.round(rentalPercent)}% of total
               </p>
             </div>
           </div>
-          <p className="font-bold text-slate-900">
+          <p className="font-bold text-[18px] text-slate-900">
             ${stats.investments.toLocaleString()}
           </p>
         </div>

@@ -1,4 +1,6 @@
 import { LuWallet } from "react-icons/lu";
+import { GoArrowUpRight } from "react-icons/go";
+import { GoArrowDownLeft } from "react-icons/go";
 export default function BalanceCard() {
   return (
     <div className="bg-white border-2 border-[#F1F5F9] rounded-3xl p-6 shadow-sm">
@@ -6,23 +8,27 @@ export default function BalanceCard() {
 
       <div className=" gap-3 mb-4">
         <h2 className="text-[50px] font-bold">$689,372.00</h2>
-        <span className="text-[16px] font-bold bg-[#F0FDF4] text-[#008236] px-2 py-1 rounded-full">
-          ↑ 5% more than last month
-        </span>
+        <div className="bg-[#F0FDF4] text-[#008236] px-4 py-1 rounded-full gap-[5px] inline-flex items-center font-bold">
+            <span><GoArrowUpRight/></span> 
+            <p className="text-[16px] ">
+            5% more than last month
+            </p>
+        </div>
+
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
         <SummaryCard
           title="TOTAL EARNINGS"
           value="$22,678.00"
-          badge="↓ 5%"
+          badge="5%"
           dark
           icon={<LuWallet />}
         />
         <SummaryCard
           title="PROPERTIES"
           value="12"
-          badge="↑ 8%"
+          badge="8%"
           dark
             icon={<LuWallet />}
         />
