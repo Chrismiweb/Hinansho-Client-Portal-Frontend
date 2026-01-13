@@ -11,6 +11,7 @@ export default function PlanCard({
   next,
   frequency,
   due,
+  onPay,
 }) {
   return (
     <div className="bg-white rounded-[37px] pt-[37px] pb-[70px] px-[40px] border-2 border-[#F1F5F9]">
@@ -61,7 +62,7 @@ export default function PlanCard({
       </div>
 
       <div className="flex gap-3 justify-between">
-        <button className="flex items-center justify-center px-[110px] bg-[#0F172A] text-white py-2 rounded-lg text-[16px]]">
+        <button onClick={onPay} className="flex items-center justify-center px-[110px] bg-[#0F172A] text-white py-2 rounded-lg text-[16px]]">
           Pay Installment <GoArrowUpRight/>
         </button>
         <button className="border px-4 border-[#E2E8F0] rounded-lg text-[16px]">

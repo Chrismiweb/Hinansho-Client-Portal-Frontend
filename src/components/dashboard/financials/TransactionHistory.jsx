@@ -4,7 +4,7 @@ import { CiFilter } from "react-icons/ci";
 
 export default function TransactionHistory() {
   return (
-    <div className="bg-white rounded-[37px] p-6 border-2 border-[#F1F5F9]">
+    <div className="bg-white rounded-[37px] p-6 border-2 border-[#F1F5F9] ">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-[24px] font-semibold">
           Transaction History

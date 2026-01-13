@@ -5,7 +5,7 @@ import TransactionHistory from './TransactionHistory'
 
 function FinancialsPage() {
   return (
-    <div className='flex flex-col gap-[35px]'>
+    <div className='flex flex-col gap-[35px] pb-[200px]'>
         <StatsSummary/>
         <ActivePlans/>
         <TransactionHistory />
