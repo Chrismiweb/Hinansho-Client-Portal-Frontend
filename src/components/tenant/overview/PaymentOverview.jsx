@@ -1,9 +1,12 @@
 "use client";
 
 import { WrenchScrewdriverIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
+import PayRentModal from "./PayRentModal";
 
 export default function PaymentOverview() {
+    const [open, setOpen] = useState(false);
   return (
     <section className="grid grid-cols-1 lg:grid-cols-[1.8fr_0.9fr] gap-6">
       {/* Left big card */}
@@ -33,7 +36,7 @@ export default function PaymentOverview() {
               </p>
             </div>
 
-            <button className="rounded-[16px] bg-[#DDA04E] px-[35px] py-4 text-[16px] cursor-pointer font-semibold text-[#0F172B] shadow-sm hover:opacity-95 transition">
+            <button onClick={() => setOpen(true)} className="rounded-[16px] bg-[#DDA04E] px-[35px] py-4 text-[16px] cursor-pointer font-semibold text-[#0F172B] shadow-sm hover:opacity-95 transition">
               Pay Rent Now
             </button>
           </div>
@@ -53,6 +56,9 @@ export default function PaymentOverview() {
           label="Chat Admin"
         />
       </div>
+
+       {/* MODAL */}
+      <PayRentModal open={open} onClose={() => setOpen(false)} />
     </section>
   );
 }
