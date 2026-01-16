@@ -32,7 +32,7 @@ export default function Sidebar() {
     } else if (istenant) {
       return [
         { label: "Overview", href: "/tenant", icon: Squares2X2Icon },
-        { label: "Payments", href: "/tenant/payments", icon: CreditCardIcon },
+        // { label: "Payments", href: "/tenant/payments", icon: CreditCardIcon },
         { label: "Services", href: "/tenant/services", icon: BriefcaseIcon },
         { label: "Messages", href: "/tenant/messages", icon: ChatBubbleLeftIcon },
         { label: "Documents", href: "/tenant/documents", icon: DocumentTextIcon },
