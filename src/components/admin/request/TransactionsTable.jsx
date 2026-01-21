@@ -22,10 +22,10 @@ export default function TransactionsTable() {
         <thead className="text-left  text-[#45556C] bg-[#F8FAFC] border-b border-[#F8FAFC]">
           <tr>
             <th className="py-3">ID</th>
+            <th>Issue / Requester</th>
+            <th>Location</th>
             <th>Date</th>
-            <th>Description</th>
-            <th>Entity</th>
-            <th>Amount</th>
+            <th>Priority</th>
             <th>Status</th>
             <th></th>
 
@@ -35,25 +35,40 @@ export default function TransactionsTable() {
         <tbody className="divide-y-0">
 
           <TransactionRow
-            id="INV_00076"
-            desc="Monthly Rent - Unit 304"
-            type="Income"
-            date="17 Apr, 2024"
+            id="#62748E"
+            issue="AC Not Cooling"
+            requester="John Doe"
+            date="2024-06-14"
             status="Completed"
-            amount="+$25,500"
             entity="John Doe"
+            location="Pavilion - Unit 304"
+            unit="Unit 12B"
             positive
+            priority="High"
           />
 
           <TransactionRow
-            id="INV_00075"
-            desc="Plumbing Repair"
-            type="Expense"
-            date="15 Apr, 2024"
+            id="#62748E"
+            issue="Plumbing Repair"
+            requester="Jane Smith"
+            date="2024-06-15"
             status="Pending"
             entity="ACME Plumbing"
-            amount="-$32,750"
+            priority="Medium"
+            location="Sunset Villas - Unit 202"
+            unit="Unit 5A"
+
           />
+          <TransactionRow
+            id="#62748E"
+            issue="Electrical Issue"
+            requester="Mike Johnson"
+            date="2024-06-16"
+            status="In Progress"
+            entity="Bright Electric"
+            priority="Low"
+            location="Oceanview Apartments - Unit 101"
+            unit="Unit 3C"/>
         </tbody>
       </table>
     </div>

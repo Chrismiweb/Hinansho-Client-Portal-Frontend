@@ -43,7 +43,7 @@ export default function Sidebar() {
         { label: "Properties", href: "/admin/properties", icon: CreditCardIcon },
         { label: "Tenants", href: "/admin/tenants", icon: BriefcaseIcon },
         { label: "Finances", href: "/admin/finance", icon: ChatBubbleLeftIcon },
-        { label: "Requests", href: "/admin/requests", icon: DocumentTextIcon },
+        { label: "Requests", href: "/admin/request", icon: DocumentTextIcon },
       ];
     }
     return []; // fallback for undefined routes
