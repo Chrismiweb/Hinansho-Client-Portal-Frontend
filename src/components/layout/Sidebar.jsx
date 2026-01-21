@@ -40,10 +40,10 @@ export default function Sidebar() {
     } else if (isAdmin) {
       return [
         { label: "Overview", href: "/admin", icon: Squares2X2Icon },
-        { label: "Payments", href: "/admin/payments", icon: CreditCardIcon },
-        { label: "Services", href: "/admin/services", icon: BriefcaseIcon },
-        { label: "Messages", href: "/admin/messages", icon: ChatBubbleLeftIcon },
-        { label: "Documents", href: "/admin/documents", icon: DocumentTextIcon },
+        { label: "Properties", href: "/admin/properties", icon: CreditCardIcon },
+        { label: "Tenants", href: "/admin/tenants", icon: BriefcaseIcon },
+        { label: "Finances", href: "/admin/finance", icon: ChatBubbleLeftIcon },
+        { label: "Requests", href: "/admin/requests", icon: DocumentTextIcon },
       ];
     }
     return []; // fallback for undefined routes
