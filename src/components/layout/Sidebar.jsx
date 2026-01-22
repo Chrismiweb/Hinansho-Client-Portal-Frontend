@@ -46,7 +46,7 @@ export default function Sidebar() {
         </p>
 
         <nav className="space-y-2">
-          <NavItem icon={Cog6ToothIcon} label="Preferences" href="/dashboard/preferences" />
+          <NavItem icon={Cog6ToothIcon} label="Settings" href="/dashboard/settings" />
           <NavItem
             icon={ArrowRightOnRectangleIcon}
             label="Log out"
