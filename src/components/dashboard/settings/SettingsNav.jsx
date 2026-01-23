@@ -19,13 +19,13 @@ export default function SettingsNav({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <div className="bg-white rounded-full shadow-md h-16 p-1">
-      <div className="flex gap-1 h-full items-center overflow-x-auto px-1">
+    <div className="bg-white rounded-full shadow-md w-fit h-16 p-1">
+      <div className="flex gap-1 h-full items-center  px-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-shrink-0 px-6 py-2 rounded-full min-w-[159px] flex items-center justify-center gap-3 text-base font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 px-6 py-2 rounded-full h-[52px] min-w-[159px] flex items-center justify-center gap-3 text-base font-medium transition-all duration-200 ${
               activeTab === tab.id
                 ? "bg-[#0F172B] text-white shadow-lg"
                 : "text-gray-700 hover:text-gray-900"
