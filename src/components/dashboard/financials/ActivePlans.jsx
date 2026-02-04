@@ -13,7 +13,7 @@ export default function ActivePlans() {
     setOpenModal(true);
   };
   return (
-    <div>
+    <div className="w-[90%] md:w-[95%] lg:w-full">
       <h3 className="text-[23px] font-bold mb-[30px]">Active Plans</h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

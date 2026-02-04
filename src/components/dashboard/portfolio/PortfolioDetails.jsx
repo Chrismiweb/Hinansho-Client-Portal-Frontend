@@ -26,7 +26,7 @@ export default function PortfolioDetails() {
 
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">{property.name}</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold">{property.name}</h1>
           <p className="text-slate-500">
             {property.location} • {property.type}
           </p>

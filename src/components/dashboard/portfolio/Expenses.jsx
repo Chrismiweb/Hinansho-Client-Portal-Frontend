@@ -18,7 +18,7 @@ export default function Expenses() {
   return (
     <div className="mt-6 bg-white rounded-t-2xl border border-[#0000001A] p-6">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col md:flex-row gap-[20px] md:gap-0 justify-between mb-6">
         <div>
           <h3 className="text-[17px] font-semibold">
             Expense Log
@@ -28,7 +28,7 @@ export default function Expenses() {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2 text-sm border border-[#00000000] rounded-lg shadow-sm hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 w-[50%] md:w-0 text-sm border border-[#00000000] rounded-lg shadow-sm hover:bg-gray-50">
           <FiDownload className="text-[18px]" />
           Download CSV
         </button>

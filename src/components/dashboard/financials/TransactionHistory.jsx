@@ -4,9 +4,9 @@ import { CiFilter } from "react-icons/ci";
 
 export default function TransactionHistory() {
   return (
-    <div className="bg-white rounded-[37px] p-6 border-2 border-[#F1F5F9] ">
+    <div className="bg-white hidden md:flex md:flex-col rounded-[37px] p-6 border-2 border-[#F1F5F9] lg:w-full w-[90%] md:w-[95%]">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-[24px] font-semibold">
+        <h3 className="text-[24px] w-[40%] font-semibold">
           Transaction History
         </h3>
 
@@ -14,11 +14,11 @@ export default function TransactionHistory() {
           <div className="relative">
             <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
-              className="pl-9 pr-4 py-2 border-2 border-[#E2E8F0] bg-[#F8FAFC] w-74 placeholder:font-semibold rounded-lg text-sm"
+              className="pl-9 pr-4 py-2 border-2 border-[#E2E8F0] bg-[#F8FAFC] w-[150px] md:w-74 placeholder:font-semibold rounded-lg text-sm"
               placeholder="Search transactions..."
             />
           </div>
-          <button className="border-2 rounded-lg border-[#E2E8F0] bg-[#F8FAFC] p-2">
+          <button className="border-2 rounded-lg border-[#E2E8F0] hidden md:flex bg-[#F8FAFC] p-2">
             <CiFilter className="text-[#717182]" />
           </button>
         </div>

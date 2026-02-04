@@ -4,18 +4,18 @@ import { CiCircleCheck } from "react-icons/ci";
 
 export default function StatsSummary() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="w-[90%] md:w-[95%] flex flex-col lg:w-full md:grid  md:grid-cols-3 lg:gap-6 md:gap-[10px] gap-[30px]">
 
       {/* Total Outstanding */}
       <div className="bg-[#0F172B] text-white rounded-[32px] p-6">
         <div className="flex flex-col gap-3 mb-3">
-        <div className="bg-[#FFFFFF1A] rounded-[16px] items-center flex justify-center p-[12] w-[20%]">
+        <div className="bg-[#FFFFFF1A] rounded-[16px] items-center flex justify-center p-[12] w-[17%] md:w-[20%]">
             <LuWallet className="text-[25px] text-[#DDA04E]" />
         </div>
-          <p className="text-16px text-[#90A1B9]">Total Outstanding</p>
+          <p className="text-[16px] text-[#90A1B9]">Total Outstanding</p>
         </div>
-        <h2 className="text-[35px] font-bold">$24,000.00</h2>
-        <p className="text-sm text-[#90A1B9] mt-2">
+        <h2 className="text-[30px] lg:text-[35px] font-bold">$24,000.00</h2>
+        <p className="text-[16px] md:text-sm text-[#90A1B9] mt-2">
           Across 2 active plans
         </p>
       </div>
@@ -35,7 +35,7 @@ export default function StatsSummary() {
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div className="bg-[#00C950] h-2 rounded-full w-[61%]" />
           </div>
-          <p className="text-xs text-[#90A1B9] mt-2">
+          <p className="text-[16px] md:text-sm text-[#90A1B9] mt-2">
             61% of total commitments
           </p>
         </div>
@@ -52,7 +52,7 @@ export default function StatsSummary() {
 
         <h2 className="text-[35px] font-bold">$5,000.00</h2>
 
-        <span className="inline-block mt-3 text-[14px] font-bold bg-[#FFFBEB] text-[#E17100] px-3 py-1 rounded-full">
+        <span className="inline-block mt-3 text-[16px] md:text-sm font-bold bg-[#FFFBEB] text-[#E17100] px-3 py-1 rounded-full">
           Due in 8 days (May 15)
         </span>
       </div>

@@ -3,10 +3,10 @@ import { GoArrowDownLeft } from "react-icons/go";
 import { RxDotFilled } from "react-icons/rx";
 export default function RecentActivities() {
   return (
-    <div className=" py-[40px] px-[38px] border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm">
+    <div className=" py-[20px] md:py-[40px] px-[20px] lg:px-[38px] border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm">
       <div className="flex justify-between mb-7">
-        <h3 className="font-semibold text-[24px]">Recent Activities</h3>
-        <span className="text-[16px] text-[#62748E]">Filter</span>
+        <h3 className="font-semibold text-[20px] md:text-[24px]">Recent Activities</h3>
+        {/* <span className="text-[16px] text-[#62748E]">Filter</span> */}
       </div>
 
       <div className="space-y-4">
@@ -61,7 +61,7 @@ function Activity({ title, amount, status, date, icon, green, refNo,dot }) {
         <div className={` text-[25px] p-3 rounded-2xl ${green ? 'bg-[#F0FDF4] text-[#00A63E]' : 'bg-[#FEF2F2] text-[#E7000B]' } inline-block mr-4`}>
             {icon}
         </div>
-      <div className="w-[20%] ">
+      <div className="w-[45%] md:w-[20%]">
         <p className="text-[18px] font-semibold">{title}</p>
         <p className="text-[14px] text-[#90A1B9]">{refNo}</p>
       </div>
@@ -70,14 +70,14 @@ function Activity({ title, amount, status, date, icon, green, refNo,dot }) {
         <p className="text-sm font-medium">{amount}</p>
       </div>
         <p
-            className={`text-[14px] flex items-center font-bold ${
+            className={`text-[14px]  items-center font-bold hidden md:flex ${
             isCompleted ? "text-[#00A63E]" : "text-[#DDA04E]"
             }`}
         >
-           <span className="text-[20px]"> {dot}</span>
+           <span className="text-[20px] "> {dot}</span>
             {status}
         </p>
-        <p className="text-[16px] text-[#90A1B9]">{date}</p>
+        <p className="text-[16px] hidden md:flex text-[#90A1B9]">{date}</p>
         
     </div>
   );
