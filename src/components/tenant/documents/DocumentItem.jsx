@@ -20,7 +20,7 @@ export default function DocumentItem({ doc }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col lg:flex-row items-center gap-3">
         <button className="text-sm text-gray-500 flex items-center gap-1">
           <EyeIcon className="w-4 h-4" />
           Preview

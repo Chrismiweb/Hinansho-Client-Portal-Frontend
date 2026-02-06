@@ -19,7 +19,8 @@ export default function SectionTwo() {
       : documentCategories[activeTab] || [];
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-[#E2E8F0]">
+
+    <div className="bg-white rounded-3xl p-6 border border-[#E2E8F0] w-full">
       {/* Tabs + Search */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
         <div className="flex gap-2 bg-[#F8FAFC] p-1 rounded-full">
@@ -60,5 +61,6 @@ export default function SectionTwo() {
         )}
       </div>
     </div>
+
   );
 }

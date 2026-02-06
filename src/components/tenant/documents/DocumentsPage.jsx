@@ -4,7 +4,7 @@ import SectionTwo from './SectionTwo'
 
 function DocumentsPage() {
   return (
-        <div className="space-y-10">
+        <div className="flex flex-col gap-5 items-center justify-center lg:items-start lg:justify-start w-full ">
       <SectionOne />
       <SectionTwo />
     </div>

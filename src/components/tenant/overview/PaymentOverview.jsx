@@ -17,8 +17,8 @@ export default function PaymentOverview() {
         <div className="relative p-7 md:p-7 h-full flex flex-col justify-between min-h-[190px]">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[16px] text-[#90A1B9]">Next Payment Due</p>
-              <h2 className="mt-2 text-[41px] font-semibold text-white">
+              <p className="text-[14px] md:text-[16px] text-[#90A1B9]">Next Payment Due</p>
+              <h2 className="mt-2 text-[35px] mt-[27px] lg:mt-0 md:text-[41px] font-semibold text-white">
                 July 1, 2024
               </h2>
             </div>
@@ -28,15 +28,15 @@ export default function PaymentOverview() {
             </span>
           </div>
 
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between mt-[27px] lg:mt-0">
             <div>
               <p className="text-[16px] text-[#90A1B9]">Total Amount</p>
-              <p className="mt-[5px] text-[27px] font-bold text-white">
+              <p className="mt-[5px] text-[24px] md:text-[27px] font-bold text-white">
                 $850.00
               </p>
             </div>
 
-            <button onClick={() => setOpen(true)} className="rounded-[16px] bg-[#DDA04E] px-[35px] py-4 text-[16px] cursor-pointer font-semibold text-[#0F172B] shadow-sm hover:opacity-95 transition">
+            <button onClick={() => setOpen(true)} className="rounded-[16px] bg-[#DDA04E] px-[10px]  lg:px-[35px] py-2 md:py-4 text-[14px] md:text-[16px] cursor-pointer font-semibold text-[#0F172B] shadow-sm hover:opacity-95 transition">
               Pay Rent Now
             </button>
           </div>
@@ -69,7 +69,7 @@ function ActionCard({ icon, iconBg, label }) {
       <div className={`h-12 w-12 rounded-full ${iconBg} flex items-center justify-center`}>
         {icon}
       </div>
-      <p className="text-[16px] font-semibold text-[#314158]">{label}</p>
+      <p className="text-[16px] md:text-[20px] lg:text-[16px] font-semibold text-[#314158]">{label}</p>
     </button>
   );
 }
