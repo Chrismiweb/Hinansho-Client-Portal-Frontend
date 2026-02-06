@@ -4,7 +4,7 @@ import { CiFilter } from "react-icons/ci";
 
 export default function TransactionsTable() {
   return (
-    <div className="bg-white rounded-[24px] p-6 border-2 border-[#F1F5F9] mt-[32px]">
+    <div className="bg-white rounded-[24px] p-6 border-2 border-[#F1F5F9] mt-[32px] lg:w-full w-[95%] ">
         <div className="flex items-center w-full justify-between gap-3">
           <div className="relative">
             <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -24,10 +24,10 @@ export default function TransactionsTable() {
             <th className="py-3">ID</th>
             <th>Issue / Requester</th>
             <th>Location</th>
-            <th>Date</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th></th>
+            <th className="hidden md:table-cell">Date</th>
+            <th className="hidden md:table-cell">Priority</th>
+            <th className="hidden md:table-cell">Status</th>
+            <th className="hidden md:table-cell"></th>
 
           </tr>
         </thead>

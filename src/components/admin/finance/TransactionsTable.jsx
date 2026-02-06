@@ -110,14 +110,14 @@ export default function TransactionsTable() {
       : transactions.filter(t => t.type === filter);
 
   return (
-    <div className="bg-white rounded-[24px] p-6 border-2 border-[#F1F5F9] mt-[32px]">
+    <div className="bg-white rounded-[24px] p-6 border-2 lg:w-full w-[95%] border-[#F1F5F9] mt-[32px]">
       {/* Top controls */}
       <div className="flex items-center w-full justify-between gap-3">
         {/* Search */}
         <div className="relative">
           <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className="pl-9 pr-4 py-2 border-2 border-[#E2E8F0] bg-[#F3F3F5] w-74 rounded-[14px] text-sm"
+            className="pl-9 pr-4 py-2 border-2 border-[#E2E8F0] bg-[#F3F3F5] w-[80%] md:w-74 rounded-[14px] text-sm"
             placeholder="Search transactions..."
           />
         </div>
@@ -126,10 +126,10 @@ export default function TransactionsTable() {
         <div className="relative">
           <button
             onClick={() => setOpen(!open)}
-            className="border-2 rounded-lg text-[14px] cursor-pointer shadow-sm border-[#E2E8F0] flex items-center gap-[8px] bg-[#F8FAFC] px-3 py-2"
+            className="border-2 rounded-lg text-sm md:text-[14px] cursor-pointer shadow-sm border-[#E2E8F0] flex items-center gap-[8px] bg-[#F8FAFC] px-3 py-2"
           >
             <CiFilter />
-            <span>{filter === "All" ? "All Types" : filter}</span>
+            <span className="hidden md:flex">{filter === "All" ? "All Types" : filter}</span>
           </button>
 
           {open && (
@@ -158,9 +158,10 @@ export default function TransactionsTable() {
             <th className="py-3">ID</th>
             <th>Date</th>
             <th>Description</th>
-            <th>Entity</th>
-            <th>Amount</th>
-            <th>Status</th>
+            <th className="hidden md:table-cell">Entity</th>
+            <th className="hidden md:table-cell">Amount</th>
+            <th className="hidden md:table-cell">Status</th>
+
             <th />
           </tr>
         </thead>

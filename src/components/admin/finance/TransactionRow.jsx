@@ -67,13 +67,13 @@ export default function TransactionRow({
       <td className="py-4 text-[#62748E]">{id}</td>
       <td className="text-[14px]">{date}</td>
       <td className="text-[14px]">{desc}</td>
-      <td className="text-[14px] text-[#62748E]">{entity}</td>
+      <td className="text-[14px] text-[#62748E] hidden md:table-cell">{entity}</td>
 
-      <td className={`font-medium ${positive ? "text-[#00A63E]" : ""}`}>
+      <td className={`font-medium hidden md:table-cell ${positive ? "text-[#00A63E]" : ""}`}>
         {amount}
       </td>
 
-      <td>
+      <td className="hidden md:table-cell"> 
         <span
           className={`text-xs px-3 py-1 rounded-full ${
             status === "Completed"
@@ -86,7 +86,7 @@ export default function TransactionRow({
       </td>
 
       {/* ACTIONS */}
-      <td className="text-right relative">
+      <td className="text-right relative hidden md:table-cell">
         <button
           onClick={() => setOpen(!open)}
           className="text-[20px] text-[#94A3B8]"

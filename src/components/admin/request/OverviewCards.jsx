@@ -6,7 +6,7 @@ import { PiWarningCircleLight } from "react-icons/pi";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 export default function OverviewCards() {
   return (
-    <section>
+    <section className="w-full px-[20px] lg:px-0">
         <div className="flex gap-[10px]">
             <button className="px-[16px] py-[6px] bg-white border-2 text-[#314158] mb-[46px] flex items-center gap-[7px] rounded-[8px] cursor-pointer border-[#E2E8F0] rounded-[8px]">
                 <FiDownload className="" /> Export CSV

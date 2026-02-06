@@ -4,7 +4,7 @@ import { FiDownload } from "react-icons/fi";
 
 export default function OverviewCards() {
   return (
-    <section>
+    <section className="w-full px-[20px] lg:px-0">
         <button className="px-[16px] shadow-sm py-[6px] bg-white border-2 text-[#314158] mb-[46px] flex items-center gap-[7px] rounded-[8px] cursor-pointer border-[#E2E8F0] rounded-[8px]">
            <FiDownload className="" /> Export CSV
         </button>

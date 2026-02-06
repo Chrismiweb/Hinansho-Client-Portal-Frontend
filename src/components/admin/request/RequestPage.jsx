@@ -4,7 +4,8 @@ import TransactionsTable from "./TransactionsTable";
 export default function RequestPage() {
   return (
     <div className="min-h-screen">
-      <div className="w-full">
+      <div className="w-full lg:items-start lg:justify-start justify-center items-center flex flex-col">
+
         <OverviewCards />
         <TransactionsTable />
       </div>
