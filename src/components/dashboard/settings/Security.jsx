@@ -1,4 +1,5 @@
 "use client";
+import { Lock } from "lucide-react";
 import React, { useState } from "react";
 
 export default function Security() {
@@ -42,13 +43,13 @@ export default function Security() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
           <div className="relative">
-            <span className="absolute left-3 top-3 text-gray-400">🔒</span>
+            <span className="absolute left-3 top-3 text-gray-400"><Lock /></span>
             <input
               type={showPassword ? "text" : "password"}
+              placeholder="************"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-12 py-3 bg-gray-50"
-              placeholder=""
             />
           </div>
         </div>
@@ -57,9 +58,10 @@ export default function Security() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-gray-400">🔒</span>
+              <span className="absolute left-3 top-3 text-gray-400"><Lock /></span>
               <input
                 type={showPassword ? "text" : "password"}
+                placeholder="************"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full rounded-xl border border-gray-200 px-12 py-3 bg-gray-50"
@@ -70,9 +72,10 @@ export default function Security() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-gray-400">🔒</span>
+              <span className="absolute left-3 top-3 text-gray-400"><Lock /></span>
               <input
                 type={showPassword ? "text" : "password"}
+                placeholder="************"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full rounded-xl border border-gray-200 px-12 py-3 bg-gray-50"

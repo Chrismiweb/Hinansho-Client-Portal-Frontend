@@ -16,7 +16,7 @@ const StatsCard = () => {
   const offset = circumference - (rentalPercent / 100) * circumference;
 
   return (
-    <div className="border-2 bg-white border-[#F1F5F9] rounded-3xl shadow-sm p-6 w-full max-w-sm">
+    <div className="border-2 bg-white border-[#F1F5F9] rounded-3xl shadow-sm p-6 w-full lg:max-w-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold text-slate-900">Statistics</h2>

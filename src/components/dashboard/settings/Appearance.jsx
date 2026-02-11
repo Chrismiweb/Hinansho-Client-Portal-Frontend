@@ -1,65 +1,90 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 
 export default function Appearance() {
   const [theme, setTheme] = useState("light");
-  const [fontSize, setFontSize] = useState("medium");
-  const [compactMode, setCompactMode] = useState(false);
 
   const themes = [
     {
       id: "light",
       label: "Light",
-      description: "Clean and bright interface",
-      preview: "bg-white border-2",
+      selectable: true,
+      preview: (
+        <div className="h-full w-full rounded-xl bg-gray-50 border border-gray-200 flex">
+          <div className="w-10 bg-gray-200 rounded-l-xl" />
+          <div className="flex-1" />
+        </div>
+      ),
     },
     {
       id: "dark",
-      label: "Dark",
-      description: "Easy on the eyes",
-      preview: "bg-gray-900 border-2",
+      label: "Dark (Coming Soon)",
+      selectable: false,
+      preview: (
+        <div className="h-full w-full rounded-xl bg-gray-400 opacity-60 flex">
+          <div className="w-10 bg-gray-500 rounded-l-xl" />
+          <div className="flex-1" />
+        </div>
+      ),
     },
     {
       id: "system",
       label: "System",
-      description: "Follows system settings",
-      preview: "bg-gradient-to-r from-white to-gray-900 border-2",
+      selectable: true,
+      preview: (
+        <div className="h-full w-full rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-2xl">
+          🤖
+        </div>
+      ),
     },
-  ];
-
-  const fontSizes = [
-    { id: "small", label: "Small", size: "text-sm" },
-    { id: "medium", label: "Medium", size: "text-base" },
-    { id: "large", label: "Large", size: "text-lg" },
   ];
 
   return (
     <div className="bg-white rounded-[28px] shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Appearance </h2>
+      <h2 className="text-2xl font-semibold text-gray-900 mb-1">Appearance</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Customize the look and feel of the application.
+      </p>
 
-      {/* Theme Selection */}
-      <div className="mb-8 pb-8  border-gray-200">
-        <p className="text-gray-600 text-sm mb-6">
-         Customize the look and feel of the application.
-        </p>
-        <div className="grid grid-cols-3 gap-4">
-          {themes.map((themeOption) => (
+      <div className="grid grid-cols-3 gap-6">
+        {themes.map((item) => {
+          const isActive = theme === item.id;
+
+          return (
             <button
-              key={themeOption.id}
-              onClick={() => setTheme(themeOption.id)}
-              className={`p-4 rounded-lg border-2 transition ${
-                theme === themeOption.id
-                  ? "border-[#1a1f35] ring-2 ring-[#1a1f35] ring-opacity-20"
-                  : "border-gray-300 hover:border-gray-400"
-              }`}
+              key={item.id}
+              disabled={!item.selectable}
+              onClick={() => item.selectable && setTheme(item.id)}
+              className={`
+                relative rounded-2xl p-3 text-left transition
+                ${item.selectable ? "cursor-pointer" : "cursor-not-allowed"}
+                ${
+                  isActive
+                    ? "border-2 border-[#1a1f35]"
+                    : "border border-gray-200"
+                }
+              `}
             >
-              <div className={`w-full h-24 rounded-lg mb-3 ${themeOption.preview}`} />
-              <h4 className="font-semibold text-gray-900">{themeOption.label}</h4>
-              <p className="text-xs text-gray-600">{themeOption.description}</p>
+              <div className="h-28 mb-3">{item.preview}</div>
+
+              <p
+                className={`text-sm font-medium ${
+                  item.selectable ? "text-gray-900" : "text-gray-400"
+                }`}
+              >
+                {item.label}
+              </p>
+
+              {isActive && (
+                <span className="absolute bottom-3 right-3 h-5 w-5 rounded-full bg-[#1a1f35] flex items-center justify-center">
+                  <Check className="h-3 w-3 text-white" />
+                </span>
+              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 export default function Header() {
   return (
-    <header className="w-full mt-7.5 flex items-center justify-between gap-4 mb-6">
+    <header className="w-full mt-7.5 hidden lg:flex lg:flex-row items-center justify-between gap-4 mb-6">
       {/* Left: Greeting */}
       <div>
         <h1 className="text-[24px] font-semibold text-[#0F172B] flex items-center gap-2">
           Good morning, Chrismi! <span>👋</span>
         </h1>
         <p className="text-sm text-[#62748E]">
-          Here is what’s happening with your portfolio today.
+          Welcome Back!
         </p>
       </div>
 

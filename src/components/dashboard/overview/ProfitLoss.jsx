@@ -11,12 +11,12 @@ const ProfitLoss = () => {
   return (
     <div className="border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm p-[38px]">
       {/* Header */}
-      <div className="flex items-start justify-between mb-[38px]">
+      <div className="flex flex-col-reverse md:flex-row items-start justify-between mb-[38px]">
         <div>
-          <h2 className="text-[24px] font-bold text-[#0F172B]">
+          <h2 className="mt-[14px] md:mt-0 text-[22px] md:text-[30px] lg:text-[24px] font-bold text-[#0F172B]">
             Profit and Loss
           </h2>
-          <p className="text-[16px] text-[#62748E]">
+          <p className="text-[16px] md:text-[18px] lg:text-[16px] text-[#62748E]">
             View your income in a certain period of time
           </p>
         </div>
