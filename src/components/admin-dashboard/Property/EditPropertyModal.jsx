@@ -1,21 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Camera } from "lucide-react";
 import Image from "next/image";
 
 function EditPropertyModal({ isOpen, onClose, property }) {
   const [formData, setFormData] = useState({
-    propertyName: property?.name || "",
-    location: property?.location || "",
-    propertyType: property?.type || "Hostel",
-    status: property?.status || "Active",
-    totalUnits: property?.units?.match(/\d+/)?.[0] || "",
-    expectedROI: property?.roi?.replace("%", "") || "",
+    propertyName: "",
+    location: "",
+    propertyType: "Hostel",
+    status: "Active",
+    totalUnits: "",
+    expectedROI: "",
     description: "",
     image: null,
-    imagePreview: property?.image || null,
+    imagePreview: null,
   });
+
+  useEffect(() => {
+    if (!property) return
+    setFormData({
+      propertyName: property.name || "",
+      location: property.location || "",
+      propertyType: property.type || "Hostel",
+      status: property.status || "Active",
+      totalUnits: property.units?.match(/\d+/)?.[0] || "",
+      expectedROI: property.roi?.replace("%", "") || "",
+      description: property.description || "",
+      image: null,
+      imagePreview: property.image || null,
+    })
+  }, [property])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

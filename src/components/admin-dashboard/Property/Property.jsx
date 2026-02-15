@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Search, Filter, Edit, MoreVertical, Trash2 } from 'lucide-react'
 import AddPropertyModal from '../Overview/AddPropertyModal'
 import EditPropertyModal from './EditPropertyModal'
 import ViewDetailsModal from './ViewDetailsModal'
 import ManageUnitsModal from './ManageUnitsModal'
+import { fetchProperties, deleteProperty } from '../../../lib/api/properties'
 
 function Property() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -17,44 +18,9 @@ function Property() {
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [activeDropdown, setActiveDropdown] = useState(null)
 
-  const properties = [
-    {
-      id: 1,
-      name: 'The Pavilion Hostel',
-      location: 'University District, Zone A',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-      status: 'Active',
-      type: 'Hostel',
-      roi: '12.5%',
-      occupancy: '92%',
-      units: '50 Units',
-      managed: 'Managed by Hinansho',
-    },
-    {
-      id: 2,
-      name: 'Green Valley Estate',
-      location: 'North Hills',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-      status: 'Completed',
-      type: 'Land',
-      roi: '18.2%',
-      occupancy: '0%',
-      units: '20 Units',
-      managed: 'Managed by Hinansho',
-    },
-    {
-      id: 3,
-      name: 'Sunrise Apartments',
-      location: 'Downtown Edge',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
-      status: 'Under Management',
-      type: 'Construction',
-      roi: '0%',
-      occupancy: '0%',
-      units: '12 Units',
-      managed: 'Managed by Hinansho',
-    },
-  ]
+  const [properties, setProperties] = useState([])
+  const [loadingProperties, setLoadingProperties] = useState(false)
+  const [propertiesError, setPropertiesError] = useState(null)
 
   const stats = [
     { label: 'Total Properties', value: '3', icon: '🏢' },
@@ -85,11 +51,66 @@ function Property() {
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
-      property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.location.toLowerCase().includes(searchTerm.toLowerCase())
+      (property.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (property.location || '').toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'All' || property.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoadingProperties(true)
+        setPropertiesError(null)
+        const token = typeof window !== 'undefined' && (localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('accessToken'))
+        if (!token) {
+          setPropertiesError('No auth token found')
+          setLoadingProperties(false)
+          return
+        }
+        const data = await fetchProperties(token)
+        // transform backend properties into UI-friendly shape
+        const list = (data.properties || []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          location: p.location,
+          image: (p.image && p.image.data) || p.image || '',
+          status: p.status || 'Active',
+          type: p.property_type || p.type || 'Hostel',
+          roi: p.expected_roi ? `${p.expected_roi}%` : p.roi || '0%',
+          occupancy: p.occupancy || '0%',
+          units: p.totalUnits ? `${p.totalUnits} Units` : p.units || '0 Units',
+          managed: p.managed || 'Managed by Hinansho',
+          raw: p,
+        }))
+        setProperties(list)
+      } catch (err) {
+        console.error(err)
+        setPropertiesError(err.message || 'Failed to load properties')
+      } finally {
+        setLoadingProperties(false)
+      }
+    }
+
+    load()
+  }, [])
+
+  const handleDelete = async (id) => {
+    const ok = confirm('Delete this property? This action cannot be undone.')
+    if (!ok) return
+    try {
+      const token = typeof window !== 'undefined' && (localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('accessToken'))
+      if (!token) {
+        alert('No auth token found; please sign in.')
+        return
+      }
+      await deleteProperty(id, token)
+      setProperties((prev) => prev.filter((p) => String(p.id) !== String(id)))
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to delete property')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4 md:p-8">
@@ -292,8 +313,8 @@ function Property() {
                       </button>
                       <button
                         onClick={() => {
-                          console.log('Delete property:', property.id)
                           setActiveDropdown(null)
+                          handleDelete(property.id)
                         }}
                         className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition duration-200"
                       >

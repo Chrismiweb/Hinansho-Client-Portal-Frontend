@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { X, Upload } from 'lucide-react'
+import { createProperty } from '../../../lib/api/properties'
 
 function AddPropertyModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -42,10 +43,63 @@ function AddPropertyModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Handle form submission here
-    onClose()
+
+    const submit = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        // try common localStorage keys for token
+        const token =
+          (typeof window !== 'undefined' &&
+            (localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('accessToken'))) ||
+          null
+
+        if (!token) {
+          setError('No auth token found. Please sign in.')
+          setLoading(false)
+          return
+        }
+
+        const payload = {
+          name: formData.propertyName,
+          property_type: formData.propertyType,
+          location: formData.location,
+          description: formData.description,
+          status: formData.status,
+          totalUnits: formData.totalUnits,
+          expected_roi: formData.expectedROI,
+          image: formData.image,
+        }
+
+        const res = await createProperty(payload, token)
+        console.log('Property created:', res)
+        // reset form and close
+        setFormData({
+          propertyName: '',
+          location: '',
+          propertyType: 'Hostel',
+          status: 'Active',
+          totalUnits: '0',
+          expectedROI: '0.0',
+          description: '',
+          image: null,
+          imagePreview: null,
+        })
+        onClose()
+      } catch (err) {
+        console.error(err)
+        setError(err.message || 'Failed to create property')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    submit()
   }
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleCancel = () => {
     setFormData({
@@ -271,11 +325,17 @@ function AddPropertyModal({ isOpen, onClose }) {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 text-white font-semibold bg-[#DDA04E] hover:bg-orange-300 rounded-[28px] transition duration-200"
+              disabled={loading}
+              className={`px-6 py-3 text-white font-semibold rounded-[28px] transition duration-200 ${
+                loading ? 'bg-gray-400' : 'bg-[#DDA04E] hover:bg-orange-300'
+              }`}
             >
-              Add Property
+              {loading ? 'Adding...' : 'Add Property'}
             </button>
           </div>
+          {error && (
+            <p className="text-red-600 text-sm mt-2">{error}</p>
+          )}
         </form>
       </div>
     </div>
