@@ -1,9 +1,10 @@
+import Overview from '@/components/admin-dashboard/Overview/Oveview'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <h6>Admin Dashboard</h6>
+        <Overview />
     </div>
   )
 }

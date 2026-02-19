@@ -37,17 +37,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} antialiased`}
       >
-        <div className="min-h-screen flex lg:pr-10 lg:pl-2.5 bg-[#F7F9FB]">
-          {/* Sidebar */}
-          <aside className="h-auto hidden lg:block pt-7.5 pl-7.5 pr-12.5">
-            <Sidebar />
-            <MobileSidebar/>
-          </aside>
-
+        <div className="min-h-screen bg-[#F7F9FB]">
           {/* Main */}
           <div className="flex-1 flex flex-col">
-            <Header />
-            <HeaderMobile/>
+            {/* <Header />
+            <HeaderMobile /> */}
 
             <main className="flex-1 overflow-y-auto">
               {children}

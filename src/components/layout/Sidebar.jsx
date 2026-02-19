@@ -23,27 +23,25 @@ export default function Sidebar() {
   const getNavItems = () => {
     if (isInvestor) {
       return [
-        { label: "Overview", href: "/dashboard", icon: Squares2X2Icon },
-        { label: "Portfolio", href: "/dashboard/portfolio", icon: BriefcaseIcon },
+        { label: "Dashboard", href: "/dashboard", icon: Squares2X2Icon },
         { label: "Financials", href: "/dashboard/financials", icon: CreditCardIcon },
-        { label: "Messages", href: "/dashboard/messages", icon: ChatBubbleLeftIcon },
+        { label: "Overview", href: "/dashboard/overview", icon: Squares2X2Icon },
+        { label: "Portfolio", href: "/dashboard/portfolio", icon: BriefcaseIcon },
         { label: "Documents", href: "/dashboard/documents", icon: DocumentTextIcon },
       ];
     } else if (istenant) {
       return [
         { label: "Overview", href: "/tenant", icon: Squares2X2Icon },
-        // { label: "Payments", href: "/tenant/payments", icon: CreditCardIcon },
         { label: "Services", href: "/tenant/services", icon: BriefcaseIcon },
-        { label: "Messages", href: "/tenant/messages", icon: ChatBubbleLeftIcon },
         { label: "Documents", href: "/tenant/documents", icon: DocumentTextIcon },
       ];
     } else if (isAdmin) {
       return [
         { label: "Overview", href: "/admin", icon: Squares2X2Icon },
-        { label: "Properties", href: "/admin/properties", icon: CreditCardIcon },
-        { label: "Tenants", href: "/admin/tenants", icon: BriefcaseIcon },
-        { label: "Finances", href: "/admin/finance", icon: ChatBubbleLeftIcon },
-        { label: "Requests", href: "/admin/request", icon: DocumentTextIcon },
+        { label: "Finance", href: "/admin/finance", icon: CreditCardIcon },
+        { label: "Property", href: "/admin/property", icon: BriefcaseIcon },
+        { label: "Request", href: "/admin/request", icon: ChatBubbleLeftIcon },
+        { label: "Tenant", href: "/admin/tenant", icon: DocumentTextIcon },
       ];
     }
     return []; // fallback for undefined routes
@@ -88,11 +86,11 @@ export default function Sidebar() {
         </p>
 
         <nav className="space-y-2">
-          <NavItem icon={Cog6ToothIcon} label="Settings" href="/dashboard/settings" />
+          <NavItem icon={Cog6ToothIcon} label="Settings" href={`${isAdmin ? '/admin' : istenant ? '/tenant' : '/dashboard'}/settings`} />
           <NavItem
             icon={ArrowRightOnRectangleIcon}
             label="Log out"
-            href="/logout"
+            onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
           />
         </nav>
       </div>
@@ -118,22 +116,23 @@ export default function Sidebar() {
 /* ---------------------- */
 /* Nav Item Component    */
 /* ---------------------- */
-function NavItem({ href, icon: Icon, label, active }) {
+function NavItem({ href, icon: Icon, label, active, onClick }) {
+  const commonClass = `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition ${
+    active ? "bg-linear-to-r from-gray-900 to-gray-800 text-white shadow-lg" : "text-gray-500 hover:bg-gray-100"
+  }`;
+
+  if (onClick) {
+    return (
+      <button onClick={onClick} className={commonClass}>
+        <Icon className={`w-5 h-5 ${active ? "text-yellow-400" : "text-gray-400"}`} />
+        {label}
+      </button>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition
-        ${
-          active
-            ? "bg-linear-to-r from-gray-900 to-gray-800 text-white shadow-lg"
-            : "text-gray-500 hover:bg-gray-100"
-        }`}
-    >
-      <Icon
-        className={`w-5 h-5 ${
-          active ? "text-yellow-400" : "text-gray-400"
-        }`}
-      />
+    <Link href={href} className={commonClass}>
+      <Icon className={`w-5 h-5 ${active ? "text-yellow-400" : "text-gray-400"}`} />
       {label}
     </Link>
   );
