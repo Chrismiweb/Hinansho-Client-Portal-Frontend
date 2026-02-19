@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import EmailConfirmationModal from "./EmailConfirmationModal";
 import ResetPasswordModal from "./ResetPasswordModal";
+import { setAuthSession } from "@/lib/authStorage";
+
 
 const slides = [
   {
@@ -29,7 +31,7 @@ const slides = [
   },
 ];
 
-function Login() {
+function LoginTest() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalState, setModalState] = useState({
     showForgotPassword: false,
@@ -108,19 +110,40 @@ function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('https://hinansho-client-portal-backend.onrender.com/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
       const json = await res.json().catch(() => ({}));
-      if (res.ok) {
-        if (json.token) localStorage.setItem('token', json.token);
-        // Redirect on success
-        window.location.href = '/';
-      } else {
-        setError(json.message || `Login failed (${res.status})`);
-      }
+    //   if (res.ok) {
+    //     if (json.token) localStorage.setItem('token', json.token);
+    //     // Redirect on success
+    //     window.location.href = '/';
+    //   } else {
+    //     setError(json.message || `Login failed (${res.status})`);
+    //   }
+    setAuthSession({
+        token: json.token,
+        user: json.user,
+        forcePasswordChange: json.forcePasswordChange,
+        });
+
+        // Redirect on success (role-based)
+        const role = json?.user?.role?.toLowerCase();
+
+        if (json.forcePasswordChange) {
+        window.location.href = "/auth/change-password";
+        } else if (role === "admin") {
+        window.location.href = "/admin";
+        } else if (role === "investor") {
+        window.location.href = "/dashboard";
+        } else if (role === "tenant") {
+        window.location.href = "/tenant";
+        } else {
+        window.location.href = "/";
+        }
+
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {
@@ -300,4 +323,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginTest;
