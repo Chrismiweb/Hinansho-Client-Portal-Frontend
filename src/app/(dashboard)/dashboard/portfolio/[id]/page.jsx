@@ -30,25 +30,25 @@ export default function PortfolioDetails() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8 min-h-screen">
       {/* Back button */}
       <Link
         href="/dashboard/portfolio"
         className=" flex items-center mb-4"
       >
-        <div className=" text-[18px] flex items-center">
+        <div className="text-[18px] md:text-[18px] flex items-center">
             <div className=""><IoMdArrowBack/> </div> 
             <p>Back to Portfolio</p>
         </div>
       </Link>
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[15px] md:gap-0">
         <div>
-          <p className="text-4xl font-bold text-[#0F172B]">
+          <p className="text-[25px] md:text-3xl lg:text-4xl font-bold text-[#0F172B]">
             {property.name}
           </p>
-          <p className="text-[#62748E] text-[18px] mt-1.5">
+          <p className="text-[#62748E] text-[16px] md:text-[18px] mt-1.5">
             {property.location} • {property.type}
           </p>
         </div>
@@ -61,7 +61,6 @@ export default function PortfolioDetails() {
       {/* Tabs */}
       <Tabs tab={tab} setTab={setTab} />
 
-      {/* Tab Content */}
       {tab === "overview" && <Overview data={property} />}
       {tab === "financials" && <Financials />}
       {tab === "expenses" && <Expenses />}
