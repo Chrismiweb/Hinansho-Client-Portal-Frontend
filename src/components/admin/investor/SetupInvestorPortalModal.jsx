@@ -62,7 +62,6 @@ export default function SetupInvestorPortalModal({ open, onClose }) {
           setLoading(true);
 
           const token = getAuthToken(); // ✅ read from localStorage
-          // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTY3YWMyMTE2NDk5NDkzYTQ1Nzk2ODQiLCJlbWFpbCI6ImFrZXJlbGUuc2FtdWVsNEBnbWFpbC5jb20iLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE3NzA5NTMwNzksImV4cCI6MTc3MTU1Nzg3OX0.Nv5EithneC1GXAg9qsYBv-5TEi-8GsGLeEqzb_UHSh4"
           if (!token) throw new Error("Token is missing.");
 
           const username = toUsernameFromEmail(email);
