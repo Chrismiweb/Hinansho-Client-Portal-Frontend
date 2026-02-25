@@ -1,10 +1,10 @@
-import Overview from '@/components/admin-dashboard/Overview/Oveview'
+import DocumentsPage from '@/components/dashboard/documents/DocumentsPage'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <Overview />
+        <DocumentsPage/>
     </div>
   )
 }
