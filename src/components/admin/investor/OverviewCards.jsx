@@ -1,14 +1,51 @@
 "use client";
 import { FiDownload } from "react-icons/fi";
-import { TiSpannerOutline } from "react-icons/ti";
-import { CiClock2 } from "react-icons/ci";
-import { PiWarningCircleLight } from "react-icons/pi";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { IoMdAdd } from "react-icons/io";
 import SetupInvestorPortalModal from "./SetupInvestorPortalModal";
 import { useState } from "react";
+import { LuUsers } from "react-icons/lu";
+import { LuBuilding2 } from "react-icons/lu";
+import { CiMail } from "react-icons/ci";
+import { useEffect } from "react";
+import axios from "axios";
+import { getAuthToken } from "@/lib/authStorage";
+
 export default function OverviewCards() {
+
     const [open, setOpen] = useState(false);
+   const [summary, setSummary] = useState({
+     totalInvestors: 0,
+     assetsUnderManagement: 0,
+     pendingInvites: 0,
+   });
+
+
+  useEffect(() => {
+     const fetchSummary = async () => {
+       try {
+         const token = getAuthToken();
+         if (!token) return;
+
+         const res = await axios.get(
+           "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+           {
+             headers: {
+               Authorization: `Bearer ${token}`,
+             },
+           }
+         );
+
+         if (res.data?.summary) {
+           setSummary(res.data.summary);
+         }
+       } catch (err) {
+         console.error("Error fetching summary:", err);
+       }
+     };
+
+     fetchSummary();
+ }, []);
+
   return (
     <section className="w-full px-[20px] lg:px-0">
         <div className="flex gap-[10px]">
@@ -24,30 +61,30 @@ export default function OverviewCards() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Total Income */}
       <div className="bg-white rounded-[16px] border-2 border-[#F1F5F9] shadow-sm p-6 flex flex-col gap-[38px]">
-        <p className="text-[14px] text-[#62748E]">Total Tickets</p>
+        <p className="text-[14px] text-[#62748E]">Total Investors</p>
         <div className="flex items-center gap-[8px]">
             <div className="w-8 h-8 bg-[#F8FAFC] rounded-full flex items-center justify-center">
-                <TiSpannerOutline className="  text-[#45556C] text-[18px] " />
+                <LuUsers className="  text-[#45556C] text-[18px] " />
             </div>
-          <p className="text-2xl font-bold">6</p>
+          <p className="text-2xl font-bold">{summary.totalInvestors}</p>
         </div>
       </div>
         <div className="bg-white rounded-[16px] border-2 shadow-sm border-[#F1F5F9] p-6 flex flex-col gap-[38px]">
-            <p className="text-[14px] text-[#62748E]">Open Requests</p>
+            <p className="text-[14px] text-[#62748E]">Assets Under Management</p>
             <div className="flex items-center gap-[8px]">
                 <div className="w-8 h-8 bg-[#EFF6FF] rounded-full flex items-center justify-center">
-                    <CiClock2 className="  text-[#155DFC] text-[18px] " />
+                    <LuBuilding2 className="  text-[#155DFC] text-[18px] " />
                 </div>
-            <p className="text-2xl font-bold">3</p>
+            <p className="text-2xl font-bold">${summary.assetsUnderManagement.toLocaleString()}</p>
             </div>
         </div>
         <div className="bg-white rounded-[16px] border-2 shadow-sm border-[#F1F5F9] p-6 flex flex-col gap-[38px]">
-            <p className="text-[14px] text-[#62748E]">High Priority</p>
+            <p className="text-[14px] text-[#62748E]">Pending Invites</p>
             <div className="flex items-center gap-[8px]">
                 <div className="w-8 h-8 bg-[#FEF2F2] rounded-full flex items-center justify-center">
-                    <PiWarningCircleLight className="  text-[#E7000B] text-[18px] " />
+                    <CiMail className="  text-[#E7000B] text-[18px] " />
                 </div>
-            <p className="text-2xl font-bold">2</p>
+            <p className="text-2xl font-bold">{summary.pendingInvites}</p>
             </div>
         </div>
 
