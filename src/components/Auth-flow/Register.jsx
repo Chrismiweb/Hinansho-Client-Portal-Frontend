@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+// Directly call /api/auth/register from this component
+import EmailConfirmationModal from "./EmailConfirmationModal";
 
 const slides = [
   {
@@ -28,6 +30,15 @@ const slides = [
 
 function Register() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -46,6 +57,68 @@ function Register() {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setError("");
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.username || !formData.email || !formData.password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const registrationData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: "Tenant", // Default role, can be changed based on UI
+      };
+
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(registrationData),
+      });
+
+      const json = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        // Store email for confirmation and show modal
+        setRegisteredEmail(formData.email);
+        setShowEmailConfirmation(true);
+        console.log('Registration successful:', json);
+      } else {
+        throw Object.assign(new Error(json.message || `HTTP ${res.status}`), { data: json, status: res.status });
+      }
+    } catch (err) {
+      setError(err.data?.message || err.message || "Registration failed. Please try again.");
+      console.error("Registration error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailConfirmationClose = () => {
+    setShowEmailConfirmation(false);
+  };
+
+  const handleEmailConfirmationSuccess = () => {
+    setShowEmailConfirmation(false);
+    // Redirect to login or dashboard
+    window.location.href = "/login";
   };
 
   return (
@@ -124,7 +197,7 @@ function Register() {
           </p>
 
           {/* Form */}
-          <form className="w-full">
+          <form className="w-full" onSubmit={handleRegisterSubmit}>
             {/* Username Field */}
             <div className="mb-4 sm:mb-6">
               <label className="block text-sm sm:text-base lg:text-[16px] text-[#768C9F] font-medium font-pop mb-2">
@@ -132,6 +205,9 @@ function Register() {
               </label>
               <input
                 type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
                 placeholder="name@example.com"
                 className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
@@ -145,6 +221,9 @@ function Register() {
               </label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="johndoe@gmail.com"
                 className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
@@ -158,6 +237,9 @@ function Register() {
               </label>
               <input
                 type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="••••••••"
                 className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
@@ -167,6 +249,13 @@ function Register() {
                 symbols
               </small>
             </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-xs sm:text-sm text-red-600 font-inter">{error}</p>
+              </div>
+            )}
 
             {/* Terms Section */}
             <div className="mb-4 sm:mb-6 text-start">
@@ -191,9 +280,10 @@ function Register() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 mb-3 sm:mb-4 font-pop"
+              disabled={loading}
+              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 mb-3 sm:mb-4 font-pop"
             >
-              Create an account
+              {loading ? "Creating account..." : "Create an account"}
             </button>
 
             {/* Login Link Bottom */}
@@ -209,6 +299,15 @@ function Register() {
           </form>
         </div>
       </div>
+
+      {/* Email Confirmation Modal */}
+      {showEmailConfirmation && (
+        <EmailConfirmationModal
+          email={registeredEmail}
+          onClose={handleEmailConfirmationClose}
+          onSubmit={handleEmailConfirmationSuccess}
+        />
+      )}
     </div>
   );
 }

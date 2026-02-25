@@ -1,10 +1,10 @@
-import Overview from '@/components/admin-dashboard/Overview/Oveview'
+import Property from '@/components/admin-dashboard/Property/Property'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <Overview />
+        <Property />
     </div>
   )
 }
