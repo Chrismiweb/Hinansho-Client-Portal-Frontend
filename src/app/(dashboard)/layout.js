@@ -9,17 +9,17 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen flex lg:pr-10 lg:pl-2.5 bg-[#F7F9FB]">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block pt-7.5 pl-7.5 pr-12.5">
+      {/* <aside className="hidden lg:block pt-7.5 pl-7.5 pr-12.5">
         <Sidebar />
-      </aside>
+      </aside> */}
 
       {/* Mobile Sidebar */}
-      <MobileSidebar />
+      {/* <MobileSidebar /> */}
 
       {/* Main */}
       <div className="flex-1 flex flex-col">
-        <Header />
-        <HeaderMobile />
+        {/* <Header /> */}
+        {/* <HeaderMobile /> */}
 
         <main className="flex-1 overflow-y-auto">
           {children}

@@ -1,4 +1,4 @@
-import Property from '@/components/admin-dashboard/Property/Property'
+import Property from '@/components/admin/Property/Property'
 import React from 'react'
 
 function page() {

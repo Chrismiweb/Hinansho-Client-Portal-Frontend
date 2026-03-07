@@ -6,7 +6,8 @@ import AddPropertyModal from '../Overview/AddPropertyModal'
 import EditPropertyModal from './EditPropertyModal'
 import ViewDetailsModal from './ViewDetailsModal'
 import ManageUnitsModal from './ManageUnitsModal'
-import { fetchProperties, deleteProperty } from '../../../lib/api/properties'
+import { fetchProperties } from '@/lib/fetchProperties'
+// import { fetchProperties, deleteProperty } from '../../../lib/api/properties'
 
 function Property() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -24,7 +25,7 @@ function Property() {
 
   const stats = [
     { label: 'Total Properties', value: '3', icon: '🏢' },
-    { label: 'Total Units', value: '82', icon: '🚪' },
+    { label: 'Total Units', value: '0', icon: '🚪' },
     { label: 'Total Plots', value: '200', icon: '👥' },
     { label: 'Portfolio Value', value: '$12.5M', icon: '📈' },
   ]
@@ -57,43 +58,38 @@ function Property() {
     return matchesSearch && matchesStatus
   })
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoadingProperties(true)
-        setPropertiesError(null)
-        const token = typeof window !== 'undefined' && (localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('accessToken'))
-        if (!token) {
-          setPropertiesError('No auth token found')
-          setLoadingProperties(false)
-          return
-        }
-        const data = await fetchProperties(token)
-        // transform backend properties into UI-friendly shape
-        const list = (data.properties || []).map((p) => ({
-          id: p.id,
-          name: p.name,
-          location: p.location,
-          image: (p.image && p.image.data) || p.image || '',
-          status: p.status || 'Active',
-          type: p.property_type || p.type || 'Hostel',
-          roi: p.expected_roi ? `${p.expected_roi}%` : p.roi || '0%',
-          occupancy: p.occupancy || '0%',
-          units: p.totalUnits ? `${p.totalUnits} Units` : p.units || '0 Units',
-          managed: p.managed || 'Managed by Hinansho',
-          raw: p,
-        }))
-        setProperties(list)
-      } catch (err) {
-        console.error(err)
-        setPropertiesError(err.message || 'Failed to load properties')
-      } finally {
-        setLoadingProperties(false)
-      }
-    }
 
-    load()
-  }, [])
+// ✅ Define load outside useEffect
+const load = async () => {
+  try {
+    setLoadingProperties(true);
+    setPropertiesError(null);
+    const data = await fetchProperties();
+    const list = (data || []).map((p) => ({
+      id: p._id || p.id,
+      name: p.name,
+      location: p.location,
+      image: p.images?.[0] || '',
+      status: p.status || 'Active',
+      type: p.name,
+      roi: p.expected_roi ? `${p.expected_roi}%` : '0%',
+      occupancy: p.occupancy || '0%',
+      units: p.totalUnits ? `${p.totalUnits} Units` : '0 Units',
+      managed: p.managed || 'Managed by Hinansho',
+      raw: p,
+    }));
+    setProperties(list);
+  } catch (err) {
+    setPropertiesError(err.message || 'Failed to load properties');
+  } finally {
+    setLoadingProperties(false);
+  }
+};
+
+// ✅ useEffect just calls it
+useEffect(() => {
+  load();
+}, []);
 
   const handleDelete = async (id) => {
     const ok = confirm('Delete this property? This action cannot be undone.')
@@ -155,7 +151,7 @@ function Property() {
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200"
           />
         </div>
-
+        
         <div className="flex items-center gap-3 md:ml-auto">
           <button className="flex items-center gap-2 px-4 py-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-lg transition duration-200">
             <Filter className="w-5 h-5" />
@@ -336,7 +332,14 @@ function Property() {
       )}
 
       <AddPropertyModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
-      <EditPropertyModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} property={selectedProperty} />
+      {/* <EditPropertyModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} property={selectedProperty} /> */}
+        <EditPropertyModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          property={selectedProperty}
+          // onUpdated={() => load()} // ← add this to refetch properties after edit
+          onUpdated={load}
+        />
       <ViewDetailsModal
         isOpen={isViewDetailsModalOpen}
         onClose={() => setIsViewDetailsModalOpen(false)}

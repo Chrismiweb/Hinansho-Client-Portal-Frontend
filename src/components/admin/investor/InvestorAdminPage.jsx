@@ -1,6 +1,7 @@
 import React from 'react'
 import OverviewCards from './OverviewCards'
 import TransactionsTable from './TransactionsTable'
+import FetchInvestorsStyled from './FetchInvestors'
 
 function InvestorAdminPage() {
   return (
@@ -8,7 +9,8 @@ function InvestorAdminPage() {
       <div className="w-full lg:items-start lg:justify-start justify-center items-center flex flex-col">
 
         <OverviewCards />
-        <TransactionsTable />
+        {/* <TransactionsTable /> */}
+        <FetchInvestorsStyled/>
       </div>
     </div>
   )

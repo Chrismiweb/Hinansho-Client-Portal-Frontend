@@ -1,10 +1,10 @@
-import Tenant from '@/components/admin/Tenant/Tenant'
+import ChangePassword from '@/components/Auth-flow/ChangePassword'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <Tenant />
+        <ChangePassword/>
     </div>
   )
 }
