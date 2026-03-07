@@ -1,108 +1,9 @@
-// "use client";
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import { getAuthToken } from '@/lib/authStorage';
-
-// const FetchInvestors = () => {
-//   const [investors, setInvestors] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchInvestors = async () => {
-//       const token = getAuthToken();
-//       if (!token) {
-//         setError(new Error('No authentication token found'));
-//         setLoading(false);
-//         return;
-//       }
-
-//       try {
-//         const response = await axios.get('https://hinansho-client-portal-backend.onrender.com/admin/getInvestors', {
-//           headers: {
-//             'Authorization': `Bearer ${token}`
-//           }
-//         });
-
-//         // Log the entire response object to see the structure
-//         console.log(response);
-
-//         // Check if response.data is an array or if data is inside another object
-//         if (Array.isArray(response.data)) {
-//           setInvestors(response.data);
-//         } else if (response.data && Array.isArray(response.data.investors)) {
-//           setInvestors(response.data.investors); // Adjust if data is inside another object
-//         } else {
-//           setError(new Error('Data is not in expected array format'));
-//         }
-
-//         setLoading(false);
-//       } catch (err) {
-//         setError(err);
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchInvestors();
-//   }, []);
-
-//   if (loading) return <div className="text-center py-4">Loading...</div>;
-//   if (error) return <div className="text-center text-red-500 py-4">Error: {error.message}</div>;
-
-//   return (
-//     <div className="container mx-auto px-4 py-6">
-//       <h1 className="text-2xl font-semibold mb-4">Investors List</h1>
-//       <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-//         <table className="min-w-full table-auto">
-//           <thead className="bg-gray-200 text-sm">
-//             <tr>
-//               <th className="py-2 px-4 text-left">Username</th>
-//               <th className="py-2 px-4 text-left">Email</th>
-//               <th className="py-2 px-4 text-left">Full Name</th>
-//               <th className="py-2 px-4 text-left">Phone</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {investors.map((investor, index) => (
-//               <tr key={index} className="border-t">
-//                 <td className="py-2 px-4">{investor.username}</td>
-//                 <td className="py-2 px-4">{investor.email}</td>
-//                 <td className="py-2 px-4">{investor.fullName}</td>
-//                 <td className="py-2 px-4">{investor.phone_number}</td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default FetchInvestors;
-
-
-
-
-
-
-
-
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { getAuthToken } from "@/lib/authStorage";
-
-/**
- * UI matches your screenshot:
- * - Search input (top-left)
- * - Status dropdown filter (top-right)
- * - Table: Investor | Properties Owned | Total Investment | Status | Last Login | ⋯
- *
- * API: /admin/getInvestors
- * Your API currently returns: username, email, fullName, phone_number (and maybe more)
- * Missing fields are mocked for now (propertiesOwned, totalInvestment, status, lastLogin).
- */
+import InvestorDetailsModal from "./InvestorDetailsModal";
 
 const STATUS_OPTIONS = ["All Status", "Active", "Pending"];
 
@@ -120,29 +21,6 @@ function formatMoney(n) {
   if (typeof n !== "number" || Number.isNaN(n)) return "$0";
   return n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 }
-
-// function randomFrom(arr, seedStr) {
-//   // deterministic-ish: hash seedStr into a number
-//   let h = 0;
-//   for (let i = 0; i < seedStr.length; i++) h = (h * 31 + seedStr.charCodeAt(i)) >>> 0;
-//   return arr[h % arr.length];
-// }
-
-// function mockInvestorExtras(inv) {
-//   const key = `${inv.email || ""}-${inv.username || ""}-${inv.fullName || ""}`;
-
-//   // Demo values for now
-//   const propertiesOwned = (key.length % 5) + 1; // 1..5
-//   const totalInvestment = [120000, 300000, 450000, 800000, 1200000][key.length % 5];
-//   const status = randomFrom(["Active", "Pending"], key);
-
-//   const lastLogin = (() => {
-//     const variants = ["2 hours ago", "1 day ago", "3 days ago", "Never"];
-//     return randomFrom(variants, key);
-//   })();
-
-//   return { propertiesOwned, totalInvestment, status, lastLogin };
-// }
 
 function randomFrom(arr, seedStr) {
    let h = 0;
@@ -254,21 +132,24 @@ export default function FetchInvestorsStyled() {
   const [investors, setInvestors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewInvestorId, setViewInvestorId] = useState(null);
 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [openFilter, setOpenFilter] = useState(false);
+  const [openActionMenu, setOpenActionMenu] = useState(null); // stores investor id 
+  const actionMenuRef = useRef(null);
 
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!dropdownRef.current) return;
-      if (!dropdownRef.current.contains(e.target)) setOpenFilter(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleClickOutside = (e) => {
+    if (!dropdownRef.current?.contains(e.target)) setOpenFilter(false);
+    if (!actionMenuRef.current?.contains(e.target)) setOpenActionMenu(null);
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
   useEffect(() => {
     const fetchInvestors = async () => {
@@ -453,15 +334,57 @@ export default function FetchInvestorsStyled() {
                   </td>
 
                   {/* Actions */}
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                      onClick={() => console.log("Actions for:", inv)}
-                      aria-label="More actions"
-                      type="button"
-                    >
-                      <MoreIcon className="h-5 w-5" />
-                    </button>
+                  <td className="px-6 py-4 text-right overflow-visible">
+                    <div className="relative" ref={openActionMenu === inv._id ? actionMenuRef : null}>
+                      <button
+                        type="button"
+                        aria-label="More actions"
+                        onClick={() => setOpenActionMenu(openActionMenu === inv._id ? null : inv._id)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                      >
+                        <MoreIcon className="h-5 w-5" />
+                      </button>
+
+                      {openActionMenu === inv._id && (
+                        <div className="absolute right-0 z-30 mt-1 w-72 rounded-2xl bg-white shadow-xl ring-1 ring-gray-200 overflow-hidden">
+                          {/* Header */}
+                          <div className="px-4 py-3 border-b border-gray-100">
+                            <p className="text-[15px] font-semibold text-gray-900">Actions</p>
+                          </div>
+
+                          {/* Menu items */}
+                          <div className="py-1">
+                            {[
+                              { icon: "👁️", label: "View Details", onClick: () => setViewInvestorId(inv._id) },
+                              { icon: "🏢", label: "Assign Properties", onClick: () => console.log("Assign", inv) },
+                              { icon: "📄", label: "Manage Documents", onClick: () => console.log("Docs", inv) },
+                              { icon: "✉️", label: "Resend Credentials", onClick: () => console.log("Resend", inv) },
+                            ].map(({ icon, label, onClick }) => (
+                              <button
+                                key={label}
+                                type="button"
+                                onClick={() => { onClick(); setOpenActionMenu(null); }}
+                                className="flex w-full items-center gap-3 px-4 py-3 text-[14px] text-gray-700 hover:bg-gray-50 transition"
+                              >
+                                <span className="text-[18px] w-5 text-center">{icon}</span>
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Deactivate */}
+                          <div className="border-t border-gray-100 py-1">
+                            <button
+                              type="button"
+                              onClick={() => { console.log("Deactivate", inv); setOpenActionMenu(null); }}
+                              className="flex w-full items-center gap-3 px-4 py-3 text-[14px] text-red-500 hover:bg-red-50 transition font-medium"
+                            >
+                              Deactivate Account
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -477,6 +400,12 @@ export default function FetchInvestorsStyled() {
           </table>
         </div>
       </div>
+         {/* Investor Details Modal */}
+      <InvestorDetailsModal
+        open={!!viewInvestorId}
+        onClose={() => setViewInvestorId(null)}
+        investorId={viewInvestorId}
+      />
     </div>
   );
 }

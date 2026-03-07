@@ -3,7 +3,7 @@ const API_BASE_URL = "https://hinansho-client-portal-backend.onrender.com";
 export async function POST(req) {
   const body = await req.json();
 
-  const res = await fetch(`${API_BASE_URL}/auth/login`, {
+  const res = await fetch(`https://hinansho-client-portal-backend.onrender.com/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

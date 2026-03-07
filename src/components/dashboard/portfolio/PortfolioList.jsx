@@ -1,21 +1,48 @@
-// pages/PortfolioList.jsx
-import React from "react";
-import { portfolios } from "../data/portfolioData";
-import PortfolioCard from "../components/PortfolioCard";
+"use client";
+import { useEffect, useState } from "react";
+import PortfolioCard from "./PortfolioCard";  // Assuming PortfolioCard is in the same folder
+import { getAuthToken } from "@/lib/authStorage";
 
 export default function PortfolioList() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">My Portfolio</h1>
-      <p className="text-slate-500 mb-6">
-        Manage and track your real estate investments.
-      </p>
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-      <div className="grid grid-cols-3 gap-6">
-        {portfolios.map(p => (
-          <PortfolioCard key={p.id} data={p} />
-        ))}
-      </div>
+useEffect(() => {
+  const fetchProperties = async () => {
+    try {
+      const token = getAuthToken(); // ✅ add auth
+      const res = await fetch(
+        "https://hinansho-client-portal-backend.onrender.com/investor/properties",
+        {
+          headers: {
+            token: token, // ✅ match your API's header key
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setProperties(data.properties);
+      } else {
+        throw new Error(data.message || "Failed to fetch properties");
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProperties();
+}, []);
+
+  if (loading) return <div>Loading...</div>;  // Show loading while fetching data
+  if (error) return <div>Error: {error}</div>;  // Show error message if fetch fails
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {properties.map((property) => (
+        <PortfolioCard key={property.propertyId} data={property} />
+      ))}
     </div>
   );
 }

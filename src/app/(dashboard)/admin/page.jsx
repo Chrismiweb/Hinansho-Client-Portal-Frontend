@@ -1,4 +1,4 @@
-import Overview from '@/components/admin-dashboard/Overview/Oveview'
+import Overview from '@/components/admin/Overview/Oveview'
 import React from 'react'
 
 function page() {

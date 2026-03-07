@@ -49,6 +49,7 @@ const BASE_URL =
 
 export async function apiRequest(path, { method = "GET", body, headers, timeoutMs = 30000 } = {}) {
   const token = getAuthToken();
+  console.log("Retrieved token:", token); 
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
 
