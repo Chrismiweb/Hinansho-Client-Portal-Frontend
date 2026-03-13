@@ -349,6 +349,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { X, Upload } from 'lucide-react'
+import { getAuthToken } from '@/lib/authStorage'
 
 // Simulating the API call for creating property
 const createProperty = async (payload, token) => {
@@ -403,67 +404,72 @@ function AddPropertyModal({ isOpen, onClose }) {
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const submit = async () => {
-      try {
-        setLoading(true)
-        setError(null)
+  const submit = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // try common localStorage keys for token
-        const token =
-          (typeof window !== 'undefined' &&
-            (localStorage.getItem('token') || localStorage.getItem('authToken') || localStorage.getItem('accessToken'))) ||
-          null
-
-        if (!token) {
-          setError('No auth token found. Please sign in.')
-          setLoading(false)
-          return
-        }
-
-        const payload = {
-          name: formData.propertyName,
-          property_type: formData.propertyType,
-          location: formData.location,
-          description: formData.description,
-          status: formData.status,
-          totalUnits: formData.totalUnits,
-          expected_roi: formData.expectedROI,
-          image: formData.image,
-        }
-
-        const res = await createProperty(payload, token)
-        console.log('Property created:', res)
-
-        // Now fetch and log properties after creation
-        const propertiesRes = await fetchProperties(token)
-        console.log('Fetched Properties:', propertiesRes)
-
-        // reset form and close
-        setFormData({
-          propertyName: '',
-          location: '',
-          propertyType: 'Land',
-          status: 'Active',
-          totalUnits: '0',
-          expectedROI: '0.0',
-          description: '',
-          image: null,
-          imagePreview: null,
-        })
-        onClose()
-      } catch (err) {
-        console.error(err)
-        setError(err.message || 'Failed to create property')
-      } finally {
-        setLoading(false)
+      const token = getAuthToken(); // ✅ use your helper
+      if (!token) {
+        setError("No auth token found. Please sign in.");
+        return;
       }
-    }
 
-    submit()
-  }
+      // ✅ use FormData — API expects multipart/form-data
+      const formDataPayload = new FormData();
+      formDataPayload.append("name", formData.propertyName);
+      formDataPayload.append("property_type", formData.propertyType.toLowerCase());
+      formDataPayload.append("location", formData.location);
+      formDataPayload.append("description", formData.description);
+      formDataPayload.append("status", formData.status.toLowerCase());
+      formDataPayload.append("totalUnits", formData.totalUnits);
+      formDataPayload.append("expected_roi", formData.expectedROI);
+      if (formData.image) {
+        formDataPayload.append("image", formData.image); // ✅ actual file
+      }
+
+      const res = await fetch(
+        "https://hinansho-client-portal-backend.onrender.com/admin/add-properties",
+        {
+          method: "POST",
+          headers: {
+            token: token, // ✅ correct header key
+          },
+          body: formDataPayload,
+        }
+      );
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || `Failed to add property (${res.status})`);
+      }
+
+      // reset and close
+      setFormData({
+        propertyName: "",
+        location: "",
+        propertyType: "Land",
+        status: "Active",
+        totalUnits: "0",
+        expectedROI: "0.0",
+        description: "",
+        image: null,
+        imagePreview: null,
+      });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to create property");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  submit();
+};
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)

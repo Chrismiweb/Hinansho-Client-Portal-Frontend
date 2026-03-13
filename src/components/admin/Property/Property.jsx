@@ -24,10 +24,10 @@ function Property() {
   const [propertiesError, setPropertiesError] = useState(null)
 
   const stats = [
-    { label: 'Total Properties', value: '3', icon: '🏢' },
-    { label: 'Total Units', value: '0', icon: '🚪' },
-    { label: 'Total Plots', value: '200', icon: '👥' },
-    { label: 'Portfolio Value', value: '$12.5M', icon: '📈' },
+    { label: 'Total Properties', value: 'Null', icon: '🏢' },
+    { label: 'Total Units', value: 'Null', icon: '🚪' },
+    { label: 'Total Plots', value: 'Null', icon: '👥' },
+    { label: 'Portfolio Value', value: 'Null', icon: '📈' },
   ]
 
   const getStatusColor = (status) => {
@@ -153,12 +153,12 @@ useEffect(() => {
         </div>
         
         <div className="flex items-center gap-3 md:ml-auto">
-          <button className="flex items-center gap-2 px-4 py-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-lg transition duration-200">
+          {/* <button className="flex items-center gap-2 px-4 py-2 text-gray-700 font-semibold hover:bg-gray-100 rounded-lg transition duration-200">
             <Filter className="w-5 h-5" />
             Filter
-          </button>
+          </button> */}
 
-          <span className="text-gray-600 text-sm font-semibold">Status:</span>
+          {/* <span className="text-gray-600 text-sm font-semibold">Status:</span>
           <div className="relative">
             <select
               value={statusFilter}
@@ -171,7 +171,7 @@ useEffect(() => {
               <option value="Under Management">Under Management</option>
             </select>
             <span className="absolute right-3 top-2.5 pointer-events-none text-gray-400">▼</span>
-          </div>
+          </div> */}
         </div>
       </div>
 

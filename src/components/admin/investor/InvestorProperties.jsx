@@ -4,11 +4,12 @@ import { useState } from "react";
 import { getAuthToken } from "@/lib/authStorage";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
+import AssignPropertyModal from "./AssignPropertyModal";
 
 function formatMoney(n) {
   if (!n && n !== 0) return "—";
   return Number(n).toLocaleString(undefined, {
-    style: "currency", currency: "USD", maximumFractionDigits: 0,
+    style: "currency", currency: "NGN", maximumFractionDigits: 0,
   });
 }
 
@@ -19,7 +20,7 @@ function ViewDocumentsModal({ open, onClose, docs, propertyName }) {
     <div className="fixed inset-0 z-[1100]">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className=" min-w-[450px] max-h-[80vh] flex flex-col rounded-[16px] bg-white shadow-2xl overflow-hidden">
+        <div className="w-full max-w-[480px] max-h-[80vh] flex flex-col rounded-[16px] bg-white shadow-2xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
             <div>
               <p className="text-[15px] font-semibold text-[#0F172A]">Documents</p>
@@ -86,7 +87,11 @@ function AddDocumentModal({ open, onClose, investorId, propertyId, propertyName,
 
       const res = await fetch(
         `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
+        {
+          method: "POST",
+          headers: { token: token },
+          body: formData,
+        }
       );
 
       if (!res.ok) {
@@ -109,7 +114,7 @@ function AddDocumentModal({ open, onClose, investorId, propertyId, propertyName,
     <div className="fixed inset-0 z-[1500]">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className=" max-w-[380px] rounded-[16px] bg-white shadow-2xl overflow-hidden">
+        <div className="w-full max-w-[380px] rounded-[16px] bg-white shadow-2xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <div>
               <p className="text-[15px] font-semibold text-[#0F172A]">Add Document</p>
@@ -174,145 +179,135 @@ function AddDocumentModal({ open, onClose, investorId, propertyId, propertyName,
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-export default function InvestorProperties({ portfolio, documents, investorId, allProperties }) {
+export default function InvestorProperties({ portfolio, documents, investorId, allProperties, onAssign }) {
   const [viewDocs, setViewDocs] = useState(null);
   const [addDoc, setAddDoc] = useState(null);
+  const [assignOpen, setAssignOpen] = useState(false); // ✅ declared here
 
-  // const propertyCards = documents?.length > 0
-  // ? (() => {
-  //     // Group documents by property._id
-  //     const grouped = {};
-  //     documents.forEach((doc) => {
-  //       const pid = doc.property?._id;
-  //       if (!pid) return;
-  //       if (!grouped[pid]) {
-  //         grouped[pid] = {
-  //           propertyId: pid,
-  //           propertyName: doc.property?.name || "Unknown Property",
-  //           docs: [],
-  //         };
-  //       }
-  //       grouped[pid].docs.push(doc);
-  //     });
-
-  //     // Merge in portfolio financials by matching index
-  //     return Object.values(grouped).map((card, i) => ({
-  //       ...card,
-  //       amountPaid: portfolio[i]?.amountPaid,
-  //       assignedDate: portfolio[i]?.assignedDate,
-  //       ownershipId: portfolio[i]?.ownershipId,
-  //     }));
-  //   })()
-  // : portfolio.map((item, i) => ({
-  //     propertyId: item.ownershipId,
-  //     propertyName: `Property ${i + 1}`,
-  //     docs: [],
-  //     amountPaid: item.amountPaid,
-  //     assignedDate: item.assignedDate,
-  //     ownershipId: item.ownershipId,
-  //   }));
-  // ✅ Replace your entire propertyCards logic with this
-const propertyCards = portfolio.map((item, i) => {
-  // First try to get propertyId from documents
-  const matchedDoc = documents?.find((d) => d.ownership === item.ownershipId);
-  const docByIndex = documents?.[i];
-  const sourceDoc = matchedDoc || docByIndex;
-
-  // Then try allProperties by index as final fallback
-  const propertyFromList = allProperties?.[i];
-
-  const propertyId = sourceDoc?.property?._id || propertyFromList?._id || null;
-  const propertyName = sourceDoc?.property?.name || propertyFromList?.name || `Property ${i + 1}`;
-  const finalDocs = documents?.filter((d) => d.property?._id === propertyId) || [];
-
-  return {
-    propertyId,
-    propertyName,
-    docs: finalDocs,
-    amountPaid: item.amountPaid,
-    assignedDate: item.assignedDate,
-    ownershipId: item.ownershipId,
-  };
-});
-
+  // ── Empty state — BEFORE the .map() ────────────────────────────────────
   if (!portfolio || portfolio.length === 0) {
     return (
-      <div className="text-center py-10 text-[14px] text-[#94A3B8]">
-        No properties assigned yet.
-      </div>
+      <>
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+          <div className="w-14 h-14 rounded-[16px] bg-[#DDA04E]/10 flex items-center justify-center mb-4">
+            <span className="text-[28px]">🏢</span>
+          </div>
+          <p className="text-[14px] font-semibold text-[#0F172A] mb-1">No Properties Assigned</p>
+          <p className="text-[13px] text-[#94A3B8] mb-5 max-w-[220px]">
+            This investor has no properties assigned yet.
+          </p>
+          <button
+            onClick={() => setAssignOpen(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#DDA04E] text-white text-[13px] font-medium hover:opacity-90 transition"
+          >
+            + Assign Property
+          </button>
+        </div>
+
+        <AssignPropertyModal
+          open={assignOpen}
+          onClose={() => setAssignOpen(false)}
+          investorId={investorId}
+          onAssigned={() => {
+            setAssignOpen(false);
+            onAssign?.();
+          }}
+        />
+      </>
     );
   }
+
+  // ── Build property cards — AFTER the early return ───────────────────────
+  const propertyCards = portfolio.map((item, i) => {
+    const matchedDoc = documents?.find((d) => d.ownership === item.ownershipId);
+    const docByIndex = documents?.[i];
+    const sourceDoc = matchedDoc || docByIndex;
+    const propertyFromList = allProperties?.[i];
+
+    const propertyId = sourceDoc?.property?._id || propertyFromList?._id || null;
+    const propertyName = sourceDoc?.property?.name || propertyFromList?.name || `Property ${i + 1}`;
+    const finalDocs = documents?.filter((d) => d.property?._id === propertyId) || [];
+
+    return {
+      key: item.ownershipId || `property-${i}`,
+      propertyId,
+      propertyName,
+      docs: finalDocs,
+      amountPaid: item.amountPaid,
+      assignedDate: item.assignedDate,
+      ownershipId: item.ownershipId,
+    };
+  });
 
   return (
     <>
       <div className="space-y-3">
-      {propertyCards.map((item, i) => (
-        <div key={item.propertyId || i} className="rounded-[14px] border border-[#E2E8F0] p-4 space-y-3">
-          {/* Top row */}
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-[10px] bg-[#DDA04E]/10 flex items-center justify-center flex-shrink-0">
-                <span className="text-[16px]">🏢</span>
+        {propertyCards.map((item) => (
+          <div key={item.key} className="rounded-[14px] border border-[#E2E8F0] p-4 space-y-3">
+            {/* Top row */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-[10px] bg-[#DDA04E]/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-[16px]">🏢</span>
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold text-[#0F172A]">{item.propertyName}</p>
+                  <p className="text-[11px] text-[#94A3B8]">ID: {item.ownershipId?.slice(-8) || "—"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[13px] font-semibold text-[#0F172A]">{item.propertyName}</p>
-                <p className="text-[11px] text-[#94A3B8]">ID: {item.ownershipId?.slice(-8) || "—"}</p>
+              <div className="text-right flex-shrink-0">
+                <p className="text-[13px] font-bold text-[#0F172A]">{formatMoney(item.amountPaid)}</p>
+                <p className="text-[11px] text-[#94A3B8]">Amount Paid</p>
               </div>
             </div>
-            <div className="text-right flex-shrink-0">
-              <p className="text-[13px] font-bold text-[#0F172A]">{formatMoney(item.amountPaid)}</p>
-              <p className="text-[11px] text-[#94A3B8]">Amount Paid</p>
+
+            {/* Assigned date */}
+            <p className="text-[12px] text-[#64748B]">
+              Assigned:{" "}
+              <span className="font-medium text-[#0F172A]">
+                {item.assignedDate
+                  ? new Date(item.assignedDate).toLocaleDateString("en-US", {
+                      year: "numeric", month: "short", day: "numeric",
+                    })
+                  : "—"}
+              </span>
+            </p>
+
+            {/* Buttons */}
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => setViewDocs({ propertyId: item.propertyId, propertyName: item.propertyName, docs: item.docs })}
+                className="flex-1 py-2 rounded-[10px] border border-[#E2E8F0] text-[#0F172A] text-[12px] font-medium hover:bg-gray-50 transition"
+              >
+                📄 View Documents
+              </button>
+              <button
+                onClick={() => {
+                  if (!item.propertyId) {
+                    alert("Property ID not available for this entry.");
+                    return;
+                  }
+                  setAddDoc({ propertyId: item.propertyId, propertyName: item.propertyName });
+                }}
+                disabled={!item.propertyId}
+                className="flex-1 py-2 rounded-[10px] bg-[#DDA04E] text-white text-[12px] font-medium hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                + Add Document
+              </button>
             </div>
           </div>
-
-          {/* Assigned date */}
-          <p className="text-[12px] text-[#64748B]">
-            Assigned:{" "}
-            <span className="font-medium text-[#0F172A]">
-              {item.assignedDate
-                ? new Date(item.assignedDate).toLocaleDateString("en-US", {
-                    year: "numeric", month: "short", day: "numeric",
-                  })
-                : "—"}
-            </span>
-          </p>
-
-          {/* Buttons */}
-          <div className="flex gap-2 pt-1">
-            <button
-            
-              onClick={() => setViewDocs({ propertyId: item.propertyId, propertyName: item.propertyName, docs: item.docs })}
-              className="flex-1 py-2 rounded-[10px] border border-[#E2E8F0] text-[#0F172A] text-[12px] font-medium hover:bg-gray-50 transition"
-            >
-              📄 View Documents
-            </button>
-            {/* <button
-              // onClick={() => setAddDoc({ propertyId: item.propertyId, propertyName: item.propertyName })}
-              onClick={() => {
-                console.log("propertyId being passed:", item.propertyId); // 👈 add this
-                setAddDoc({ propertyId: item.propertyId, propertyName: item.propertyName });
-              }}
-              className="flex-1 py-2 rounded-[10px] bg-[#DDA04E] text-white text-[12px] font-medium hover:opacity-90 transition"
-            >
-              + Add Document
-            </button> */}
-            <button
-              onClick={() => {
-                if (!item.propertyId) {
-                  alert("Property ID not available for this entry.");
-                  return;
-                }
-                setAddDoc({ propertyId: item.propertyId, propertyName: item.propertyName });
-              }}
-              className="flex-1 py-2 rounded-[10px] bg-[#DDA04E] text-white text-[12px] font-medium hover:opacity-90 transition disabled:opacity-40"
-              disabled={!item.propertyId}
-            >
-              + Add Document
-            </button>
-          </div>
-        </div>
-      ))}
+        ))}
       </div>
+
+      <AssignPropertyModal
+        open={assignOpen}
+        onClose={() => setAssignOpen(false)}
+        investorId={investorId}
+        onAssigned={() => {
+          setAssignOpen(false);
+          onAssign?.();
+        }}
+      />
 
       <ViewDocumentsModal
         open={!!viewDocs}

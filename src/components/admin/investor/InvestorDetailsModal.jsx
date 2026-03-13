@@ -16,7 +16,7 @@ function getInitials(name = "") {
   return name.slice(0, 2).toUpperCase() || "??";
 }
 
-const TABS = ["Overview", "Properties", "Financials", "Documents"];
+const TABS = ["Overview", "Properties", "Documents"];
 
 export default function InvestorDetailsModal({ open, onClose, investorId }) {
   const [data, setData] = useState(null);
@@ -182,6 +182,7 @@ useEffect(() => {
                     documents={documents}
                     investorId={investor?.id}
                     allProperties={allProperties}
+                    onAssign={() => fetch_()} 
                   />
                 </>
               )}
