@@ -91,7 +91,7 @@ export default function Sidebar() {
     return []; // fallback for undefined routes
   };
 
-  const settingsBase = isAdmin ? "/admin" : isTenant ? "/tenant" : "/dashboard";
+  // const settingsBase = isAdmin ? "/admin" : isTenant ? "/tenant" : "/dashboard";
 
   return (
     <aside className="bg-white rounded-3xl py-7.5 px-4 flex flex-col shadow-lg">
@@ -132,7 +132,9 @@ export default function Sidebar() {
         </p>
 
         <nav className="space-y-2">
-          <NavItem icon={Cog6ToothIcon} label="Settings" href={`${isAdmin ? '/admin' : istenant ? '/tenant' : '/dashboard'}/settings`} />
+          {/* <NavItem icon={Cog6ToothIcon} label="Settings" href={`${isAdmin ? '/admin' : istenant ? '/tenant' : '/dashboard'}/settings`} /> */}
+          <NavItem icon={Cog6ToothIcon} label="Settings" href="#" />
+
           <NavItem
             icon={ArrowRightOnRectangleIcon}
             label="Log out"

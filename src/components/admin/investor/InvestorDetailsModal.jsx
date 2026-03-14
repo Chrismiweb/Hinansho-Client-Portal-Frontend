@@ -145,7 +145,7 @@ useEffect(() => {
 
             {/* Tabs */}
             {investor && (
-              <div className=" bg-red-900 flex justify-between items-center border-gray-100 px-6">
+              <div className=" flex justify-between items-center border-gray-100 px-6">
                 {TABS.map((t) => (
                   <button
                     key={t}
