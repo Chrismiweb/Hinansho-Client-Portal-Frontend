@@ -103,48 +103,6 @@ function Login() {
     closeResetPasswordModal();
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch('https://hinansho-client-portal-backend.onrender.com/auth/login', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ email, password }),
-  //     });
-  //     const json = await res.json().catch(() => ({}));
-
-  //     if (res.ok) {
-  //       if (json.token) localStorage.setItem('token', json.token);
-  //       if (json.user?.role) localStorage.setItem('role', json.user.role);
-
-  //       const role = json.user?.role;
-
-  //       // Handle force password change first (optional)
-  //       if (json.forcePasswordChange) {
-  //         window.location.href = "/change-password";
-  //         return;
-  //       }
-
-  //       // Redirect based on role
-  //       if (role === "Admin") {
-  //         window.location.href = "/admin";
-  //       } else if (role === "Investor") {
-  //         window.location.href = "/dashboard";
-  //       } else if (role === "Tenant") {
-  //         window.location.href = "/tenant";
-  //       } else {
-  //         window.location.href = "/";
-  //       }
-  //     }
-  //   } catch (err) {
-  //     setError(err.message || 'Login failed. Please try again.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-// src/components/Login.js
 const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");

@@ -10,14 +10,55 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from "react";
+
+
+// ── Read user from localStorage ─────────────────────────────────────────────
+function getUserFromStorage() {
+  try {
+    const raw = localStorage.getItem("hinansho_auth");
+    if (!raw) return null;
+    return JSON.parse(raw)?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+function getDisplayName(user) {
+  if (!user) return "User";
+  if (user.fullName?.trim()) return user.fullName.trim();
+  if (user.username?.trim()) return user.username.trim();
+  if (user.email) {
+    // capitalise the email prefix: "chrismibiteso" → "Chrismibiteso"
+    const prefix = user.email.split("@")[0].replace(/[._-]/g, " ");
+    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  }
+  return "User";
+}
+
+function getInitials(name = "") {
+  const parts = name.trim().split(" ").filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
 
 export default function Sidebar() {
   const pathname = usePathname(); // Get current route path
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    setUser(getUserFromStorage());
+  }, []);
 
   // Determine which dashboard user is on
   const isAdmin = pathname.startsWith("/admin");
   const istenant = pathname.startsWith("/tenant");
   const isInvestor = pathname.startsWith("/dashboard");
+
+    const displayName = getDisplayName(user);
+  const role = user?.role || "—";
+  const avatar = user?.avatar || user?.profileImage || null;
+
 
    // Define links based on the dashboard type
   const getNavItems = () => {
@@ -49,6 +90,8 @@ export default function Sidebar() {
     }
     return []; // fallback for undefined routes
   };
+
+  const settingsBase = isAdmin ? "/admin" : isTenant ? "/tenant" : "/dashboard";
 
   return (
     <aside className="bg-white rounded-3xl py-7.5 px-4 flex flex-col shadow-lg">
@@ -101,14 +144,21 @@ export default function Sidebar() {
       {/* User Card */}
       <div className="mt-7.5">
         <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50">
-          <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">
-              Alex Johnson
-            </p>
-            <p className="text-xs text-gray-500">
-              Investor Account
-            </p>
+          {/* Avatar */}
+          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0">
+            {avatar ? (
+              <img src={avatar} alt={displayName} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-[13px] font-semibold text-[#DDA04E] uppercase">
+                {getInitials(displayName)}
+              </span>
+            )}
+          </div>
+
+          {/* Name + Role */}
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
+            <p className="text-xs text-gray-500 truncate">{role} Account</p>
           </div>
         </div>
       </div>

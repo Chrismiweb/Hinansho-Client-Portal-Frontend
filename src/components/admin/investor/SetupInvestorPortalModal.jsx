@@ -200,13 +200,18 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[999]">
-      <div className="absolute inset-0 bg-black/50" onClick={closeAndReset} />
-      <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4">
-        <div className="relative w-full max-w-[680px] max-h-[95vh] flex flex-col rounded-[16px] overflow-hidden shadow-2xl bg-white">
+    
+  <div className="fixed inset-0 bg-black/80 bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      {/* <div className="absolute inset-0" onClick={closeAndReset} /> */}
 
+    {/* // <div className="fixed inset-0 z-[999]">
+    //   <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4"> */}
+{/* <div className="relative lg:w-[70%] max-w-[680px] h-[85vh] sm:h-[90vh] flex flex-col rounded-[16px] overflow-hidden shadow-2xl bg-white"> */}
           {/* Header */}
-          <div className="relative bg-[#0F172A] px-5 sm:px-8 py-5 flex-shrink-0">
+          <div className="sticky top-0 bg-[#0F172A] z-5000 px-5 sm:px-8 py-5">
+        {/* <div className="sticky top-0 bg-white z-5000 border-b border-gray-200 p-6 flex justify-between items-center"> */}
+
             <button onClick={closeAndReset} className="absolute right-4 top-4 sm:right-6 sm:top-6 text-white/70 hover:text-white transition" aria-label="Close">
               <IoClose className="text-[22px]" />
             </button>
@@ -372,7 +377,7 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
                 <button
                   onClick={step === 2 ? handleUploadDocs : handleCreateInvestor}
                   disabled={loading || !canGoNext || (step === 2 && files.length === 0)}
-                  className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 rounded-[10px] bg-[#DDA04E] text-white text-[13px] sm:text-[14px] shadow-sm hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="inline-flex cursor-pointer items-center gap-2 px-4 sm:px-6 py-2 rounded-[10px] bg-[#DDA04E] text-white text-[13px] sm:text-[14px] shadow-sm hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {loading && <Spinner size={15} color="white" />}
                   {step === 1 ? (loading ? "Creating..." : "Next Step") : (loading ? (loadingMsg || "Processing...") : "Assign & Upload")}
@@ -387,6 +392,6 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 }

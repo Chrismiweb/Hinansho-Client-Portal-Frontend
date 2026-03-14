@@ -1,18 +1,62 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function getUserFromStorage() {
+  try {
+    const raw = localStorage.getItem("hinansho_auth");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+function getFirstName(user) {
+  if (!user) return "there";
+  // try fullName first, then username, then email prefix
+  const full = user.fullName?.trim() || user.name?.trim();
+  if (full) return full.split(" ")[0];
+  if (user.username) return user.username;
+  if (user.email) return user.email.split("@")[0];
+  return "there";
+}
+
 export default function Header() {
+  const [greeting, setGreeting] = useState("Good morning");
+  const [firstName, setFirstName] = useState("");
+  const [avatar, setAvatar] = useState(null);
+
+  useEffect(() => {
+    setGreeting(getGreeting());
+    const user = getUserFromStorage();
+    setFirstName(getFirstName(user));
+    setAvatar(user?.avatar || user?.profileImage || null);
+  }, []);
+
   return (
     <header className="w-full mt-7.5 hidden lg:flex lg:flex-row items-center justify-between gap-4 mb-6">
       {/* Left: Greeting */}
       <div>
         <h1 className="text-[24px] font-semibold text-[#0F172B] flex items-center gap-2">
-          Good morning, Chrismi! <span>👋</span>
+          {greeting}, {firstName}!{" "}
+          <span>
+            {greeting === "Good morning" ? "☀️" : greeting === "Good afternoon" ? "🌤️" : "🌙"}
+          </span>
         </h1>
-        <p className="text-sm text-[#62748E]">
-          Welcome Back!
-        </p>
+        <p className="text-sm text-[#62748E]">Welcome Back!</p>
       </div>
 
       {/* Right: Search + Icons */}
-      <div className="flex  items-center gap-4">
+      <div className="flex items-center gap-4">
         {/* Search */}
         <div className="relative hidden md:block">
           <input
@@ -20,8 +64,6 @@ export default function Header() {
             placeholder="Search..."
             className="w-100 shadow-md shadow-[#717182] rounded-full bg-white px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
           />
-
-          {/* Search Icon */}
           <svg
             className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
             fill="none"
@@ -49,12 +91,15 @@ export default function Header() {
         </button>
 
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-200">
-          <img
-            src="https://i.pravatar.cc/100"
-            alt="User avatar"
-            className="w-full h-full object-cover"
-          />
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center">
+          {avatar ? (
+            <img src={avatar} alt="User avatar" className="w-full h-full object-cover" />
+          ) : (
+            // Fallback: initials circle
+            <span className="text-[13px] font-semibold text-[#DDA04E] uppercase">
+              {firstName?.slice(0, 2) || "?"}
+            </span>
+          )}
         </div>
       </div>
     </header>

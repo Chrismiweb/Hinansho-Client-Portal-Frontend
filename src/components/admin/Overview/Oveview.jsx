@@ -174,7 +174,7 @@ const [loadingProps, setLoadingProps] = useState(true);
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Portfolio Table */}
+        
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg">
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Properties Portfolio
@@ -188,6 +188,7 @@ const [loadingProps, setLoadingProps] = useState(true);
                   <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Expected ROI</th>
                   <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Property Type</th>
                   <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Status</th>
+                  
                   
                 </tr>
               </thead>
@@ -241,13 +242,6 @@ const [loadingProps, setLoadingProps] = useState(true);
               </tbody>
             </table>
           </div>
-
-          {/* <div className="mt-6 pt-6 border-t border-gray-200">
-            <button className="text-gray-900 font-semibold hover:text-blue-600 transition duration-200 flex items-center gap-2 group">
-              View All Properties
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition duration-200" />
-            </button>
-          </div> */}
         </div>
 
         {/* Top Investors */}
