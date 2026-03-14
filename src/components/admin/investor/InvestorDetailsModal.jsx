@@ -16,7 +16,7 @@ function getInitials(name = "") {
   return name.slice(0, 2).toUpperCase() || "??";
 }
 
-const TABS = ["Overview", "Properties", "Financials", "Documents"];
+const TABS = ["Overview", "Properties", "Documents"];
 
 export default function InvestorDetailsModal({ open, onClose, investorId }) {
   const [data, setData] = useState(null);
@@ -79,7 +79,7 @@ useEffect(() => {
 
       {/* Modal */}
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className=" w-[40%] flex flex-col rounded-[20px] bg-white shadow-2xl overflow-hidden">
+        <div className="w-[99%] lg:w-[40%] flex flex-col rounded-[20px] bg-white shadow-2xl overflow-hidden">
 
           {/* Close button */}
           <div className="relative flex-shrink-0">
@@ -114,9 +114,9 @@ useEffect(() => {
                       <h2 className="text-[20px] font-bold text-[#0F172A] truncate">
                         {investor.fullName || "—"}
                       </h2>
-                      <button className="text-[13px] px-3 py-1 rounded-lg border border-[#E2E8F0] text-[#0F172A] hover:bg-gray-50 transition flex-shrink-0">
+                      {/* <button className="text-[13px] px-3 py-1 rounded-lg border border-[#E2E8F0] text-[#0F172A] hover:bg-gray-50 transition flex-shrink-0">
                         Edit Profile
-                      </button>
+                      </button> */}
                     </div>
                     {/* <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[12px] font-medium px-2.5 py-0.5 rounded-full ring-1 ring-green-200">
@@ -182,6 +182,7 @@ useEffect(() => {
                     documents={documents}
                     investorId={investor?.id}
                     allProperties={allProperties}
+                    onAssign={() => fetch_()} 
                   />
                 </>
               )}

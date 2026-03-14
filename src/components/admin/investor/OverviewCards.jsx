@@ -46,11 +46,63 @@ export default function OverviewCards() {
      fetchSummary();
  }, []);
 
+ const handleExport = async () => {
+  try {
+    const token = getAuthToken();
+    if (!token) return;
+
+    const res = await axios.get(
+      "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const raw = Array.isArray(res.data)
+      ? res.data
+      : Array.isArray(res.data?.investors)
+      ? res.data.investors
+      : [];
+
+    if (!raw.length) {
+      alert("No investors to export.");
+      return;
+    }
+
+    // ✅ Build CSV rows
+    const headers = ["Name", "Email", "Properties Owned", "Total Investment", "Status"];
+    const rows = raw.map((inv) => [
+      inv.fullName || inv.email?.split("@")[0] || "Unknown",
+      inv.email || "",
+      inv.propertiesCount ?? 0,
+      inv.totalInvestment ?? 0,
+      inv.status || "Active",
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+
+    // ✅ Trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `investors-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Export failed:", err);
+    alert("Failed to export investors.");
+  }
+};
+
   return (
     <section className="w-full px-[20px] lg:px-0">
         <div className="flex gap-[10px]">
-            <button className="px-[16px] py-[6px] bg-white border-2 text-[#314158] mb-[46px] flex items-center gap-[7px] rounded-[8px] cursor-pointer border-[#E2E8F0] rounded-[8px]">
-                <FiDownload className="" /> Export List
+            <button
+              onClick={handleExport}
+              className="px-[16px] py-[6px] bg-white border-2 text-[#314158] mb-[46px] flex items-center gap-[7px] rounded-[8px] cursor-pointer border-[#E2E8F0]"
+            >
+              <FiDownload /> Export List
             </button>
             <button onClick={() => setOpen(true)}  className="px-[24px] py-[10px] shadow-sm shadow-[#DDA04E] bg-[#DDA04E] text-white mb-[46px] flex items-center gap-[16px] rounded-[8px] cursor-pointer">
                 <IoMdAdd className="text-[22px]" /> Add Investor

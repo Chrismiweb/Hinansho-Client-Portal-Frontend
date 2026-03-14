@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronRight,
   AlertCircle,
@@ -12,26 +12,12 @@ import {
   Building,
 } from "lucide-react";
 import AddPropertyModal from "./AddPropertyModal";
+import { getAuthToken } from "@/lib/authStorage";
 
 function Overview() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [properties, setProperties] = useState([
-    { id: 1, name: "HR1", clients: 140, aum: "NGN17M", priority: "High" },
-    {
-      id: 2,
-      name: "Campus Ville(HR2)",
-      clients: 122,
-      aum: "NGN30M",
-      priority: "Low",
-    },
-    {
-      id: 3,
-      name: "Campus Ville(HR3)",
-      clients: 458,
-      aum: "NGN30M",
-      priority: "Medium",
-    },
-  ]);
+const [properties, setProperties] = useState([]);
+const [loadingProps, setLoadingProps] = useState(true);
 
   const [transactions] = useState([
     { id: 1, name: "John Doe", details: "HR1, HR2, HR3", amount: "+NGN23M" },
@@ -60,6 +46,27 @@ function Overview() {
       amount: "+$850.00",
     },
   ]);
+
+  useEffect(() => {
+  const load = async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+
+      const res = await fetch(
+        "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await res.json();
+      if (data.success) setProperties(data.properties);
+    } catch (err) {
+      console.error("Failed to fetch properties", err);
+    } finally {
+      setLoadingProps(false);
+    }
+  };
+  load();
+}, []);
 
   const getPriorityColor = (priority) => {
     switch (priority.toLowerCase()) {
@@ -110,7 +117,7 @@ function Overview() {
               <Wallet className="w-4 h-4 text-[#00A63E]" />
             </div>
           </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">$45,231.89</p>
+          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
           <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
             <TrendingUp className="w-4 h-4" />
             +20.1% from last month
@@ -127,7 +134,7 @@ function Overview() {
               <Users className="w-4 h-4 text-blue-500" />
             </div>
           </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">2,350</p>
+          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
           <div className="flex items-center gap-1 text-blue-600 text-sm font-semibold">
             <TrendingUp className="w-4 h-4" />
             +180 new this month
@@ -145,7 +152,7 @@ function Overview() {
             </div>
             {/* <Zap className="w-6 h-6 text-orange-500" /> */}
           </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">15</p>
+          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
           <div className="flex items-center gap-1 text-teal-600 text-sm font-semibold">
             <TrendingUp className="w-4 h-4" />
             +2% growth
@@ -160,39 +167,33 @@ function Overview() {
             </span>
             <AlertCircle className="w-4 h-4 text-red-500" />
           </div>
-          <p className="text-3xl font-bold text-white mb-2">12 Issues</p>
+          <p className="text-3xl font-bold text-white mb-2">Null</p>
           <p className="text-gray-400 text-sm">Pending maintenance</p>
         </div>
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Portfolio Table */}
+        
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg">
           <h2 className="text-xl font-bold text-gray-900 mb-6">
-            A.U.M Portfolio
+            Properties Portfolio
           </h2>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">
-                    Project
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">
-                    No of Clients
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">
-                    A.U.M per Project
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">
-                    Priority
-                  </th>
+                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Name</th>
+                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Expected ROI</th>
+                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Property Type</th>
+                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Status</th>
+                  
+                  
                 </tr>
               </thead>
               <tbody>
-                {properties.map((property) => (
+                {/* {properties.map((property) => (
                   <tr
                     key={property.id}
                     className="border-b border-gray-100 hover:bg-gray-50 transition duration-200"
@@ -217,17 +218,30 @@ function Overview() {
                       </div>
                     </td>
                   </tr>
+                ))} */}
+                {loadingProps ? (
+                  <tr>
+                    <td colSpan={4} className="py-6 text-center text-sm text-gray-400">Loading...</td>
+                  </tr>
+                ) : properties.map((property) => (
+                  <tr key={property._id} className="border-b border-gray-100 hover:bg-gray-50 transition duration-200">
+                    <td className="py-4 px-4 text-gray-900 font-medium">{property.name}</td>
+                    <td className="py-4 px-4 text-gray-700">{property.expected_roi}%</td>
+                    <td className="py-4 px-4 text-gray-700 capitalize">{property.property_type}</td>
+                    <td className="py-4 px-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
+                        property.status === "active"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {property.status}
+                      </span>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          {/* <div className="mt-6 pt-6 border-t border-gray-200">
-            <button className="text-gray-900 font-semibold hover:text-blue-600 transition duration-200 flex items-center gap-2 group">
-              View All Properties
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition duration-200" />
-            </button>
-          </div> */}
         </div>
 
         {/* Top Investors */}
