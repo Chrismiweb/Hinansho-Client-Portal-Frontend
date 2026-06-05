@@ -24,7 +24,7 @@ export default function SectionOne({ totalDocuments = 0, propertiesCount = 0, ne
           <p className="text-[14px] text-[#90A1B9] mt-1">Across {propertiesCount} properties</p>
         </div>
 
-        {/* New This Month */}
+        {/* New This Month u*/}
         <div className="bg-white rounded-[32px] w-full lg:w-[32%] p-6 border border-[#F1F5F9]">
           {/* <div className="w-13 h-13 rounded-[16px] bg-[#F0FDF4] flex items-center justify-center mb-4"> */}
             <MdArrowOutward className="w-6 h-6 text-[#00A63E] mb-3" />
