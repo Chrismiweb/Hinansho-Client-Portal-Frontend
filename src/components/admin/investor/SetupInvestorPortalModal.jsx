@@ -40,7 +40,8 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
       try {
         const token = getAuthToken();
         const res = await fetch(
-          "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+          // "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/fetch-properties`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -111,7 +112,8 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
       formData.append("propertyId", currentPropertyId);
 
       const uploadRes = await fetch(
-        `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        // `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/investors/${investorId}/documents`,
         { method: "POST", headers: { token }, body: formData }
       );
 
@@ -143,7 +145,8 @@ export default function SetupInvestorPortalModal({ open, onClose, onCreated }) {
   const assignProperty = async (investorId, propId) => {
     const token = getAuthToken();
     const res = await fetch(
-      "https://hinansho-client-portal-backend.onrender.com/admin/assign-property",
+      // "https://hinansho-client-portal-backend.onrender.com/admin/assign-property",
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/assign-property`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json", token },

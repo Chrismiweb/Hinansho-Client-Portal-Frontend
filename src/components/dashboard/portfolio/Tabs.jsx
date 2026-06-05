@@ -1,6 +1,8 @@
 // components/Tabs.jsx
 export default function Tabs({ tab, setTab }) {
-  const tabs = ["overview", "financials", "expenses", "documents"];
+  // const tabs = ["overview", "financials", "expenses", "documents"];
+  const tabs = ["overview", "documents"];
+
 
   return (
     <div className="mt-6 bg-[#ECECF0] inline-flex rounded-full p-1">

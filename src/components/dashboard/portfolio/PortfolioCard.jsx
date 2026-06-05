@@ -1,84 +1,107 @@
-// // components/PortfolioCard.jsx
-// import Link from "next/link";
-// import { IoLocationOutline } from "react-icons/io5";
-
-// export default function PortfolioCard({ data }) {
-
-//   return (
-//     <div className="bg-white border border-[#0000001A] rounded-2xl">
-//       <img
-//         src={data.image}
-//         className="rounded-t-xl h-50 w-full object-cover"
-//       />
-
-//         <div className="pt-[29px] pb-[17px] px-[25px]">
-//             <h3 className="text-[22px] text-[#0A0A0A] font-semibold">{data.name}</h3>
-//             <p className="text-[16px] text-[#717182]"><IoLocationOutline className="inline mr-1" />{data.location}</p>
-
-//             <div className="mt-5 space-y-2 text-sm">
-//                 <div className="flex text-[14px] justify-between">
-//                     <span className="text-[#62748E]">Type</span>
-//                     <span>{data.type}</span>
-//                 </div>
-//                 <div className="flex text-[14px] justify-between">
-//                     <span className="text-[#62748E]">Occupancy</span>
-//                     <span>{data.occupancy}</span>
-//                 </div>
-//                 <div className="flex text-[14px] justify-between">
-//                     <span className="text-[#62748E]">Total Units</span>
-//                     <span>{data.totalUnits}</span>
-//                 </div>
-//             </div>
-//             <Link href={`/dashboard/portfolio/${data.id}`}
-//                 className="mt-5 block w-full bg-slate-900 text-white rounded-lg py-2 text-center"
-//             >
-//                 View Details →
-//             </Link>
-//         </div>
-
-//     </div>
-//   );
-// }
-
-
+"use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { IoLocationOutline } from "react-icons/io5";
+import { apiRequest } from "@/lib/apiClient";
+
+const formatCurrency = (n) => {
+  if (!n && n !== 0) return "—";
+  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000)     return `₦${(n / 1_000).toFixed(0)}K`;
+  return `₦${n.toLocaleString()}`;
+};
 
 export default function PortfolioCard({ data }) {
+  const [imgUrl, setImgUrl] = useState(null);
+
+  useEffect(() => {
+    // Fetch plot allocation image from Drive for this property
+    apiRequest(`/investor/drive-property-images?property=${encodeURIComponent(data.name)}`)
+      .then(res => {
+        if (res.success && res.images?.length > 0) {
+          setImgUrl(res.images[0].thumbnailUrl);
+        }
+      })
+      .catch(() => {});
+  }, [data.name]);
+
+  const progress = data.receivable > 0
+    ? Math.round((data.received / data.receivable) * 100)
+    : 100;
+
+  const isPaid = data.balance === 0;
 
   return (
-    <div className="bg-white border border-[#0000001A] rounded-2xl">
-      <img
-        src={data.image}
-        className="rounded-t-xl h-50 w-full object-cover"
-        alt={data.name} // Add alt for better accessibility
-      />
-
-      <div className="pt-[29px] pb-[17px] px-[25px]">
-        <h3 className="text-[22px] text-[#0A0A0A] font-semibold">{data.name}</h3>
-        <p className="text-[16px] text-[#717182]">
-          <IoLocationOutline className="inline mr-1" />
-          {data.location}
-        </p>
-
-        <div className="mt-5 space-y-2 text-sm">
-          <div className="flex text-[14px] justify-between">
-            <span className="text-[#62748E]">Type</span>
-            <span>{data.type}</span>
+    <div className="bg-white border border-[#0000001A] rounded-2xl overflow-hidden">
+      {/* Image */}
+      <div className="h-48 w-full bg-[#F1F5F9] relative overflow-hidden">
+        {imgUrl ? (
+          <img src={imgUrl} className="w-full h-full object-cover" alt={data.name} />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-5xl mb-2">🏢</div>
+              <p className="text-[12px] text-[#94A3B8]">{data.name}</p>
+            </div>
           </div>
-          <div className="flex text-[14px] justify-between">
-            <span className="text-[#62748E]">Occupancy</span>
-            <span>{data.occupancy}%</span>
+        )}
+        {/* Status badge */}
+        <span className={`absolute top-3 right-3 text-[11px] font-bold px-3 py-1 rounded-full ${
+          isPaid ? "bg-[#F0FDF4] text-[#008236]" : "bg-[#FFFBEB] text-[#E17100]"
+        }`}>
+          {isPaid ? "Paid ✓" : "Active"}
+        </span>
+      </div>
+
+      <div className="pt-[20px] pb-[17px] px-[20px]">
+        <h3 className="text-[20px] text-[#0A0A0A] font-semibold">{data.name}</h3>
+        {data.date && (
+          <p className="text-[14px] text-[#717182] mt-0.5">
+            <IoLocationOutline className="inline mr-1" />
+            Purchased: {data.date}
+          </p>
+        )}
+
+        {/* Progress bar */}
+        <div className="mt-4">
+          <div className="flex justify-between text-[13px] text-[#62748E] mb-1">
+            <span>Payment Progress</span>
+            <span className="font-semibold">{progress}%</span>
           </div>
-          <div className="flex text-[14px] justify-between">
-            <span className="text-[#62748E]">Total Units</span>
-            <span>{data.totalUnits}</span>
+          <div className="h-2 bg-gray-100 rounded-full">
+            <div
+              className={`h-2 rounded-full transition-all ${isPaid ? "bg-[#00C950]" : "bg-[#0F172A]"}`}
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
 
+        <div className="mt-4 space-y-2 text-sm">
+          <div className="flex justify-between text-[13px]">
+            <span className="text-[#62748E]">Receivable</span>
+            <span className="font-medium">{formatCurrency(data.receivable)}</span>
+          </div>
+          <div className="flex justify-between text-[13px]">
+            <span className="text-[#62748E]">Paid</span>
+            <span className="font-medium text-[#00A63E]">{formatCurrency(data.received)}</span>
+          </div>
+          {data.balance > 0 && (
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#62748E]">Balance</span>
+              <span className="font-medium text-red-500">{formatCurrency(data.balance)}</span>
+            </div>
+          )}
+          {data.sqm > 0 && (
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#62748E]">SQM Owned</span>
+              <span className="font-medium">{data.sqm.toLocaleString()} sqm</span>
+            </div>
+          )}
+        </div>
+
         <Link
-          href={`/dashboard/portfolio/${data.propertyId}`}
-          className="mt-5 block w-full bg-slate-900 text-white rounded-lg py-2 text-center"
+          href={`/dashboard/portfolio/${encodeURIComponent(data.name)}`}
+          className="mt-5 block w-full bg-slate-900 text-white rounded-xl py-2.5 text-center text-[14px] font-medium hover:bg-slate-800 transition"
         >
           View Details →
         </Link>

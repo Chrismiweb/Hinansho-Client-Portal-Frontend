@@ -86,7 +86,8 @@ function AddDocumentModal({ open, onClose, investorId, propertyId, propertyName,
       formData.append("propertyId", propertyId);
 
       const res = await fetch(
-        `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        // `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/investors/${investorId}/documents`,
         {
           method: "POST",
           headers: { token: token },

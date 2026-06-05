@@ -9,6 +9,8 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   XMarkIcon,
+  EnvelopeIcon,
+  TableCellsIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -89,12 +91,22 @@ export default function MobileSidebar({ open, onClose }) {
 
     if (isAdmin) {
       return [
-      { label: "Overview", href: "/admin", icon: Squares2X2Icon },
-        { label: "Properties", href: "/admin/property", icon: CreditCardIcon },
-        { label: "Tenants", href: "/admin/tenant", icon: BriefcaseIcon },
-        { label: "Investors", href: "/admin/investors", icon: DocumentTextIcon },
-        { label: "Finances", href: "/admin/finance", icon: ChatBubbleLeftIcon },
-        { label: "Requests", href: "/admin/request", icon: DocumentTextIcon },
+      //  { label: "Overview", href: "/admin", icon: Squares2X2Icon },
+      //   { label: "Properties", href: "/admin/property", icon: CreditCardIcon },
+      //   { label: "Tenants", href: "/admin/tenant", icon: BriefcaseIcon },
+      //   { label: "Investors", href: "/admin/investors", icon: DocumentTextIcon },
+      //   { label: "Finances", href: "/admin/finance", icon: ChatBubbleLeftIcon },
+      //   { label: "Requests", href: "/admin/request", icon: DocumentTextIcon },
+
+        { label: "Overview",    href: "/admin",                icon: Squares2X2Icon  },
+        { label: "Properties",  href: "/admin/property",       icon: CreditCardIcon  },
+        { label: "Tenants",     href: "/admin/tenant",         icon: BriefcaseIcon   },
+        // { label: "Investors",   href: "/admin/investors",      icon: DocumentTextIcon },
+        // { label: "Finances",    href: "/admin/finance",        icon: ChatBubbleLeftIcon },
+        // { label: "Requests",    href: "/admin/request",        icon: DocumentTextIcon },
+        { label: "Send Credentials", href: "/admin/send-credentials", icon: EnvelopeIcon },
+        { label: "Receipts", href: "/admin/receipts", icon: DocumentTextIcon },
+        { label: "Data Sheet", href: "/admin/sheet",        icon: TableCellsIcon  },
 
       ];
     }
@@ -146,17 +158,17 @@ export default function MobileSidebar({ open, onClose }) {
 
         {/* Settings */}
         <div className="px-4 mt-auto pb-6">
-          <p className="text-xs font-medium text-gray-400 mb-4 tracking-wide">
+          {/* <p className="text-xs font-medium text-gray-400 mb-4 tracking-wide">
             SETTINGS
-          </p>
+          </p> */}
 
           <nav className="space-y-2">
-            <MobileNavItem
+            {/* <MobileNavItem
               href="#"
               label="Preferences"
               icon={Cog6ToothIcon}
               onClick={onClose}
-            />
+            /> */}
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-600 hover:bg-gray-100 transition"

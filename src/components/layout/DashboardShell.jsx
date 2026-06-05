@@ -6,16 +6,16 @@ import MobileSidebar from "@/components/layout/MobileSidebar";
 
 export default function DashboardShell({ children }) {
   return (
-    <div className="min-h-screen flex lg:pr-10 lg:pl-2.5 bg-[#F7F9FB]">
+    <div className="min-h-screen flex gap-[40px] lg:pr-10 lg:pl-2.5 bg-[#F7F9FB]">
       
       {/* Sidebar */}
-      <aside className="h-auto hidden lg:block pt-7.5 pl-7.5 pr-12.5">
+      <aside className="h-auto hidden lg:block pt-7.5 pl-7.5">
         <Sidebar />
       </aside>
 
       {/* Main */}
       {/* <div className="flex-1 flex flex-col"> */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto lg:pr-10 lg:pl-2.5 min-w-0">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto lg:pl-2.5 min-w-0">
         <Header />
         <HeaderMobile />
 

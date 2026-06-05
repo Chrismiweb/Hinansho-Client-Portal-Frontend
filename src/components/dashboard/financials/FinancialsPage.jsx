@@ -10,7 +10,7 @@ function FinancialsPage() {
         <StatsSummary/>
         <ActivePlans/>
         <TransactionHistory />
-        <PaymentHistoryMobile/>
+        {/* <PaymentHistoryMobile/> */}
 
     </div>
   )
