@@ -73,9 +73,9 @@ export default function MobileSidebar({ open, onClose }) {
     if (isInvestor) {
       return [
         { label: "Overview", href: "/dashboard", icon: Squares2X2Icon },
-        { label: "Portfolio", href: "/dashboard/portfolio", icon: BriefcaseIcon },
         { label: "Financials", href: "/dashboard/financials", icon: CreditCardIcon },
-        { label: "Messages", href: "/dashboard/messages", icon: ChatBubbleLeftIcon },
+        { label: "Portfolio", href: "/dashboard/portfolio", icon: BriefcaseIcon },
+        // { label: "Messages", href: "/dashboard/messages", icon: ChatBubbleLeftIcon },
         { label: "Documents", href: "/dashboard/documents", icon: DocumentTextIcon },
       ];
     }
