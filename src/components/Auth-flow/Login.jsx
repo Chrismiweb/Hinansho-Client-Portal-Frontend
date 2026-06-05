@@ -125,15 +125,15 @@ function Login() {
 
           {/* Top — Logo + heading */}
           <div className="flex flex-col items-center mb-8">
-            <img src="/assets/logo.png" alt="Logo" className="w-10 h-10 mb-4" />
-            <p className="text-white/70 text-[13px] font-medium mb-1">Join Hinansho</p>
+            <img src="/assets/logo-removebg-preview.png" alt="Logo" className="w-10 h-10 mb-4" />
+            {/* <p className="text-white/70 text-[13px] font-medium mb-1">Join Hinansho</p> */}
             <h1 className="text-white text-[28px] font-bold text-center leading-tight">
-              Create an account
+              Sign in to your account
             </h1>
-            <p className="text-white/60 text-[13px] mt-2">
+            {/* <p className="text-white/60 text-[13px] mt-2">
               Already have an account?{" "}
               <a href="/register" className="text-[#DDA04E] font-semibold hover:underline">Log in</a>
-            </p>
+            </p> */}
           </div>
 
           {/* Form */}
@@ -211,10 +211,10 @@ function Login() {
               {loading ? "Signing in..." : "Sign in"}
             </button>
 
-            <p className="text-center text-white/50 text-[13px]">
+            {/* <p className="text-center text-white/50 text-[13px]">
               Already have an account?{" "}
               <a href="/register" className="text-[#DDA04E] font-semibold hover:underline">Log in</a>
-            </p>
+            </p> */}
           </form>
 
           {/* Slide indicators */}
@@ -271,11 +271,11 @@ function Login() {
             <div className="absolute right-10 top-10">
               <img src="/assets/logo.png" alt="Logo" className="w-10 h-10" />
             </div>
-            <h2 className="text-[32px] font-medium text-[#F4D09F] mb-2">Welcome back</h2>
-            <p className="text-[#768C9F] font-medium mb-10">
+            <h2 className="text-[32px] font-medium text-[#F4D09F] mb-2">Sign in to your account</h2>
+            {/* <p className="text-[#768C9F] font-medium mb-10">
               Don&apos;t have an account?{" "}
               <a href="/register" className="text-[#F4D09F] font-semibold hover:underline">Sign up</a>
-            </p>
+            </p> */}
 
             <form onSubmit={handleSubmit}>
               <div className="mb-6">
@@ -323,10 +323,10 @@ function Login() {
                 className="w-full h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg mb-4">
                 {loading ? "Signing in..." : "Sign in"}
               </button>
-              <p className="text-sm text-gray-600">
+              {/* <p className="text-sm text-gray-600">
                 Don&apos;t have an account?{" "}
                 <a href="/register" className="text-[#F4D09F] font-semibold hover:underline">Sign up</a>
-              </p>
+              </p> */}
             </form>
           </div>
         </div>
