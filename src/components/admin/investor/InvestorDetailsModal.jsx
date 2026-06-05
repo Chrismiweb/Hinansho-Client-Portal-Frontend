@@ -40,7 +40,8 @@ useEffect(() => {
 
       // ✅ Fetch investor data
       const res = await fetch(
-        `https://hinansho-client-portal-backend.onrender.com/admin/Investor/${investorId}`,
+        // `https://hinansho-client-portal-backend.onrender.com/admin/Investor/${investorId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/Investor/${investorId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const json = await res.json();
@@ -49,7 +50,8 @@ useEffect(() => {
 
       // ✅ Fetch all properties — inside fetch_, after token is defined
       const propsRes = await fetch(
-        "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+        // "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/fetch-properties`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const propsJson = await propsRes.json();

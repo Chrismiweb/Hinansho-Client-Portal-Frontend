@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { IoClose, IoCheckmarkCircle } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { BsBuildings } from "react-icons/bs";
-import { getAuthToken } from "@/lib/authStorage";
+import { apiRequest, apiUpload } from "@/lib/apiClient";
 
 function Spinner({ size = 18, color = "white" }) {
   return (
@@ -38,12 +38,7 @@ export default function AssignPropertyModal({ open, onClose, investorId, onAssig
 
     const fetchProperties = async () => {
       try {
-        const token = getAuthToken();
-        const res = await fetch(
-          "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const data = await res.json();
+        const data = await apiRequest("/admin/fetch-properties");
         if (data.success) setProperties(data.properties);
       } catch (err) {
         console.error("Failed to fetch properties", err);
@@ -72,7 +67,8 @@ export default function AssignPropertyModal({ open, onClose, investorId, onAssig
       formData.append("propertyId", currentPropertyId);
 
       const uploadRes = await fetch(
-        `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        // `https://hinansho-client-portal-backend.onrender.com/admin/investors/${investorId}/documents`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/investors/${investorId}/documents`,
         { method: "POST", headers: { token }, body: formData }
       );
 
@@ -356,7 +352,7 @@ export default function AssignPropertyModal({ open, onClose, investorId, onAssig
 // import { IoClose, IoCheckmarkCircle } from "react-icons/io5";
 // import { MdOutlineFileUpload } from "react-icons/md";
 // import { BsBuildings } from "react-icons/bs";
-// import { getAuthToken } from "@/lib/authStorage";
+// import { apiRequest, apiUpload } from "@/lib/apiClient";
 
 // function Spinner({ size = 18, color = "white" }) {
 //   return (

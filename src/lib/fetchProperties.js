@@ -5,7 +5,9 @@ export async function fetchProperties() {
   const token = getAuthToken();
   if (!token) throw new Error("Token is missing.");
 
-  const res = await fetch("https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties", {
+  const res = await fetch(
+    // "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
+    "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -1,62 +1,73 @@
 "use client";
-import React, { useEffect, useState } from 'react'
-import SectionOne from './SectionOne'
-import SectionTwo from './SectionTwo'
-import PreviewModal from './PreviewModal'
+import React, { useEffect, useState } from 'react';
+import SectionOne from './SectionOne';
+import SectionTwo from './SectionTwo';
+import PreviewModal from './PreviewModal';
+import { apiRequest } from "@/lib/apiClient";
 
 function DocumentsPage() {
-  const [docsResponse, setDocsResponse] = useState(null);
-  const [documents, setDocuments] = useState([]);
+  const [data, setData]           = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
 
   useEffect(() => {
-    async function fetchDocuments() {
-      try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-        if (!token) {
-          console.log('DocumentsPage: no token in localStorage');
-          return;
-        }
-
-        const res = await fetch('/api/documents', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: `${token}`,
-          },
-        });
-
-        const data = await res.json();
-        console.log('Documents API response:', { status: res.status, ok: res.ok, data });
-        setDocsResponse({ status: res.status, ok: res.ok, data });
-        if (data && data.documents) {
-          setDocuments(data.documents);
-        }
-      } catch (err) {
-        console.error('DocumentsPage: fetch error', err);
-      }
-    }
-
-    fetchDocuments();
+    apiRequest("/investor/drive-documents")
+      .then(res => {
+        if (res.success) setData(res);
+        else throw new Error(res.message);
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
+  // Combine all docs for stats
+  const allDocs     = data ? [...(data.plotAllocations || []), ...(data.documents || [])] : [];
+  const properties  = new Set(allDocs.map(d => d.property)).size;
+  const newThisMonth = allDocs.filter(d => {
+    try {
+      const now = new Date();
+      return new Date(d.modifiedTime) > new Date(now.getFullYear(), now.getMonth(), 1);
+    } catch { return false; }
+  }).length;
+
   return (
-    <div className="flex flex-col gap-5 items-center justify-center lg:items-start lg:justify-start w-full ">
-      <SectionOne
-        totalDocuments={documents.length}
-        propertiesCount={new Set(documents.map((d) => d.property?.name)).size}
-        newThisMonth={documents.filter(d => {
-          try { return new Date(d.uploadedAt) > new Date(new Date().getFullYear(), new Date().getMonth(), 1); } catch { return false }
-        }).length}
-      />
+    <div className="flex flex-col gap-5 items-center justify-center lg:items-start lg:justify-start w-full">
 
-      <SectionTwo documents={documents} onPreview={(doc)=>setPreviewDoc(doc)} />
+      {loading && (
+        <div className="flex flex-col items-center justify-center w-full py-20">
+          <div className="w-10 h-10 border-4 border-[#DDA04E] border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-sm text-[#62748E]">Loading your documents from Google Drive...</p>
+        </div>
+      )}
 
-      {previewDoc && (
-        <PreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+      {!loading && error && (
+        <div className="w-full bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+          <p className="text-red-600 font-medium">❌ Failed to load documents</p>
+          <p className="text-red-400 text-sm mt-1">{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <>
+          <SectionOne
+            totalDocuments={allDocs.length}
+            propertiesCount={properties}
+            newThisMonth={newThisMonth}
+          />
+          <SectionTwo
+            grouped={data?.grouped || {}}
+            plotAllocations={data?.plotAllocations || []}
+            documents={data?.documents || []}
+            onPreview={(doc) => setPreviewDoc(doc)}
+          />
+          {previewDoc && (
+            <PreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+          )}
+        </>
       )}
     </div>
-  )
+  );
 }
 
-export default DocumentsPage
+export default DocumentsPage;

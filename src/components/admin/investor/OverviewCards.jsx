@@ -27,7 +27,8 @@ export default function OverviewCards() {
          if (!token) return;
 
          const res = await axios.get(
-           "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+          //  "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/getInvestors`,
            {
              headers: {
                Authorization: `Bearer ${token}`,
@@ -52,7 +53,8 @@ export default function OverviewCards() {
     if (!token) return;
 
     const res = await axios.get(
-      "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+      // "https://hinansho-client-portal-backend.onrender.com/admin/getInvestors",
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/getInvestors`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -127,7 +129,7 @@ export default function OverviewCards() {
                 <div className="w-8 h-8 bg-[#EFF6FF] rounded-full flex items-center justify-center">
                     <LuBuilding2 className="  text-[#155DFC] text-[18px] " />
                 </div>
-            <p className="text-2xl font-bold">${summary.assetsUnderManagement.toLocaleString()}</p>
+            <p className="text-2xl font-bold">₦{summary.assetsUnderManagement.toLocaleString()}</p>
             </div>
         </div>
         <div className="bg-white rounded-[16px] border-2 shadow-sm border-[#F1F5F9] p-6 flex flex-col gap-[38px]">

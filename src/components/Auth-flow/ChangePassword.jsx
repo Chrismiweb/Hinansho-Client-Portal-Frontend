@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { BASE_URL } from "@/lib/apiClient";
 
 const slides = [
   {
@@ -28,15 +29,13 @@ const slides = [
 
 function ChangePassword() {
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // Slider auto change
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -44,45 +43,50 @@ function ChangePassword() {
     return () => clearInterval(timer);
   }, []);
 
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+  const goToSlide = (index) => setCurrentSlide(index);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (newPassword !== confirmPassword) {
       setError("New password and confirm password do not match.");
       return;
     }
 
+    if (newPassword.length < 8) {
+      setError("New password must be at least 8 characters.");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Use Authorization: Bearer (consistent with the rest of the app)
       const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        "https://hinansho-client-portal-backend.onrender.com/auth/change-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            token: token,
-          },
-          body: JSON.stringify({
-            currentPassword,
-            newPassword,
-            confirmPassword,
-          }),
-        }
-      );
+      const res = await fetch(`${BASE_URL}/auth/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+      });
+
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
-        alert("Password changed successfully.");
-        window.location.href = "/dahboard";
+        setSuccess("Password changed successfully. Redirecting...");
+        // Determine role for correct redirect
+        const role = localStorage.getItem("role");
+        setTimeout(() => {
+          if (role === "Admin") window.location.href = "/admin";
+          else if (role === "Tenant") window.location.href = "/tenant";
+          else window.location.href = "/dashboard";
+        }, 1500);
       } else {
-        const data = await res.json().catch(() => ({}));
         setError(data.message || "Failed to change password.");
       }
     } catch (err) {
@@ -96,11 +100,7 @@ function ChangePassword() {
     <div className="flex flex-col lg:flex-row min-h-screen relative bg-white">
       {/* Logo */}
       <div className="absolute right-4 top-4 sm:right-6 sm:top-6 lg:right-10 lg:top-10 z-50">
-        <img
-          src="/assets/logo.png"
-          alt="Logo"
-          className="w-8 h-8 sm:w-10 sm:h-10"
-        />
+        <img src="/assets/logo.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
       </div>
 
       {/* Left Side - Slider */}
@@ -118,15 +118,12 @@ function ChangePassword() {
                 backgroundPosition: "center",
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/0 z-10"></div>
-
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/0 z-10" />
               <div className="relative z-20 text-white p-8 lg:p-10">
                 <h2 className="text-2xl lg:text-[32px] font-semibold mb-4 font-pop">
                   {slide.title}
                 </h2>
-                <p className="text-base opacity-95 font-inter">
-                  {slide.description}
-                </p>
+                <p className="text-base opacity-95 font-inter">{slide.description}</p>
               </div>
             </div>
           ))}
@@ -142,7 +139,7 @@ function ChangePassword() {
                   ? "bg-[#DDA04E] border-[#DDA04E] w-[50px]"
                   : "w-3 border-white/50"
               }`}
-            ></button>
+            />
           ))}
         </div>
       </div>
@@ -163,8 +160,7 @@ function ChangePassword() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
-
+                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
               />
             </div>
@@ -177,10 +173,7 @@ function ChangePassword() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                // className="w-12 h-12 md:w-14 md:h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg bg-[#F3F3F5] text-[#717182] transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-pop"
-                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
-
-
+                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
               />
             </div>
@@ -193,21 +186,18 @@ function ChangePassword() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                // className="w-12 h-12 md:w-14 md:h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg bg-[#F3F3F5] text-[#717182] transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-pop"
-                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm sm:text-[14px] bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
+                className="w-full px-3 sm:px-4 h-12 sm:h-14 border border-gray-300 rounded-lg text-sm bg-[#F3F3F5] text-[#717182] placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-[#DDA04E] focus:bg-white focus:ring-4 focus:ring-amber-100 font-inter"
                 required
               />
             </div>
 
-            {error && (
-              <p className="text-red-500 text-sm mb-4">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+            {success && <p className="text-green-600 text-sm mb-4">{success}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 mb-3 sm:mb-4 font-pop"
-
+              className="w-full h-12 sm:h-[64px] bg-[#DDA04E] hover:bg-[#C68E3D] disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 font-pop"
             >
               {loading ? "Changing Password..." : "Save Changes"}
             </button>

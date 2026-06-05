@@ -4,6 +4,7 @@ import { getAuthToken } from "@/lib/authStorage";
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "https://hinansho-client-portal-backend.onrender.com";
+  // "http://localhost:7500";
 
 export async function uploadInvestorDocuments({
   investorId,

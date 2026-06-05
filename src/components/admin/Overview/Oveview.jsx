@@ -1,240 +1,141 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  ChevronRight,
-  AlertCircle,
-  TrendingUp,
-  Users,
-  Home,
-  Zap,
-  Wallet,
-  Building,
-} from "lucide-react";
+import { AlertCircle, Users, Wallet, Building } from "lucide-react";
 import AddPropertyModal from "./AddPropertyModal";
-import { getAuthToken } from "@/lib/authStorage";
+import { apiRequest } from "@/lib/apiClient";
+
+const formatCurrency = (amount) => {
+  if (!amount && amount !== 0) return "—";
+  if (amount >= 1_000_000) return `₦${(amount / 1_000_000).toFixed(1)}M`;
+  if (amount >= 1_000) return `₦${(amount / 1_000).toFixed(0)}K`;
+  return `₦${amount.toLocaleString()}`;
+};
+
+const getInitials = (name = "") => {
+  const parts = name.trim().split(" ");
+  return parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : name.slice(0, 2).toUpperCase();
+};
+
+function StatCard({ label, value, icon: Icon, iconBg, iconColor, trend, trendColor, dark }) {
+  return (
+    <div className={`rounded-2xl p-6 shadow-lg h-45 hover:shadow-md transition duration-300 ${dark ? "bg-gray-900" : "bg-white"}`}>
+      <div className="flex justify-between items-start mb-4">
+        <span className={`text-sm font-semibold ${dark ? "text-gray-400" : "text-gray-600"}`}>{label}</span>
+        {Icon && (
+          <div className={`w-8 h-8 rounded-full flex justify-center items-center ${iconBg}`}>
+            <Icon className={`w-4 h-4 ${iconColor}`} />
+          </div>
+        )}
+      </div>
+      <p className={`text-3xl font-bold mb-2 ${dark ? "text-white" : "text-gray-900"}`}>
+        {value ?? <span className="text-gray-300 animate-pulse">...</span>}
+      </p>
+      {trend && <p className={`text-sm font-semibold ${trendColor || "text-gray-400"}`}>{trend}</p>}
+    </div>
+  );
+}
 
 function Overview() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-const [properties, setProperties] = useState([]);
-const [loadingProps, setLoadingProps] = useState(true);
 
-  const [transactions] = useState([
-    { id: 1, name: "John Doe", details: "HR1, HR2, HR3", amount: "+NGN23M" },
-    {
-      id: 2,
-      name: "John Doe",
-      details: "Unit 102 • Rent Payment",
-      amount: "+$850.00",
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      details: "Unit 102 • Rent Payment",
-      amount: "+$850.00",
-    },
-    {
-      id: 4,
-      name: "John Doe",
-      details: "Unit 102 • Rent Payment",
-      amount: "+$850.00",
-    },
-    {
-      id: 5,
-      name: "John Doe",
-      details: "Unit 102 • Rent Payment",
-      amount: "+$850.00",
-    },
-  ]);
+  // Single state for everything from the sheet
+  const [sheetData, setSheetData]   = useState(null);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
 
-  useEffect(() => {
-  const load = async () => {
-    try {
-      const token = getAuthToken();
-      if (!token) return;
-
-      const res = await fetch(
-        "https://hinansho-client-portal-backend.onrender.com/admin/fetch-properties",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
-      if (data.success) setProperties(data.properties);
-    } catch (err) {
-      console.error("Failed to fetch properties", err);
-    } finally {
-      setLoadingProps(false);
-    }
-  };
-  load();
-}, []);
-
-  const getPriorityColor = (priority) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return "bg-red-100";
-      case "medium":
-        return "bg-yellow-100";
-      case "low":
-        return "bg-green-100";
-      default:
-        return "bg-gray-100";
-    }
+  const loadSheetData = () => {
+    setLoading(true);
+    apiRequest("/admin/sheet/overview-full")
+      .then(d => {
+        if (d.success) setSheetData(d);
+        else setError(d.message);
+      })
+      .catch(err => { console.error("Sheet overview error", err); setError(err.message); })
+      .finally(() => setLoading(false));
   };
 
-  const getPriorityDot = (priority) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return "bg-red-500";
-      case "medium":
-        return "bg-yellow-500";
-      case "low":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
+  useEffect(() => { loadSheetData(); }, []);
+
+  const stats        = sheetData?.stats        || {};
+  const portfolio    = sheetData?.portfolio    || [];
+  const topInvestors = sheetData?.topInvestors || [];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4 md:p-8">
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        {/* <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Dashboard</h1> */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-full transition duration-200 flex items-center gap-2"
+          className="bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-full transition duration-200"
         >
           Add Property
         </button>
       </div>
 
+      {/* Error banner */}
+      {error && (
+        <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+          ❌ Failed to load sheet data: {error}
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* AUM Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg h-45 hover:shadow-md transition duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <span className="text-gray-600 text-sm font-semibold">A.U.M</span>
-            <div className="w-8 h-8 rounded-full flex justify-center items-center bg-[#F0FDF4]">
-              <Wallet className="w-4 h-4 text-[#00A63E]" />
-            </div>
-          </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
-          <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
-            <TrendingUp className="w-4 h-4" />
-            +20.1% from last month
-          </div>
-        </div>
-
-        {/* Total Clients Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg h-45 hover:shadow-md transition duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <span className="text-gray-600 text-sm font-semibold">
-              Total Clients
-            </span>
-            <div className="w-8 h-8 rounded-full flex justify-center items-center bg-[#EFF6FF]">
-              <Users className="w-4 h-4 text-blue-500" />
-            </div>
-          </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
-          <div className="flex items-center gap-1 text-blue-600 text-sm font-semibold">
-            <TrendingUp className="w-4 h-4" />
-            +180 new this month
-          </div>
-        </div>
-
-        {/* Total Tenants Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg h-45 hover:shadow-md transition duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <span className="text-gray-600 text-sm font-semibold">
-              Total Tenants
-            </span>
-            <div className="w-8 h-8 rounded-full flex justify-center items-center bg-[#DDA04E1A]">
-              <Building className="w-4 h-4 text-[#DDA04E]" />
-            </div>
-            {/* <Zap className="w-6 h-6 text-orange-500" /> */}
-          </div>
-          <p className="text-3xl font-bold text-gray-900 mb-2">Null</p>
-          <div className="flex items-center gap-1 text-teal-600 text-sm font-semibold">
-            <TrendingUp className="w-4 h-4" />
-            +2% growth
-          </div>
-        </div>
-
-        {/* Action Required Card */}
-        <div className="bg-gray-900 rounded-2xl p-6 shadow-lg h-45 hover:shadow-xl transition duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <span className="text-gray-400 text-sm font-semibold">
-              Action Required
-            </span>
-            <AlertCircle className="w-4 h-4 text-red-500" />
-          </div>
-          <p className="text-3xl font-bold text-white mb-2">Null</p>
-          <p className="text-gray-400 text-sm">Pending maintenance</p>
-        </div>
+        <StatCard
+          label="Total Receivable"
+          value={loading ? null : formatCurrency(stats.totalReceivable)}
+          icon={Wallet} iconBg="bg-[#F0FDF4]" iconColor="text-[#00A63E]"
+          trend="Total amount receivable from sheet" trendColor="text-green-600"
+        />
+        <StatCard
+          label="Total Investors"
+          value={loading ? null : stats.totalInvestors?.toLocaleString()}
+          icon={Users} iconBg="bg-[#EFF6FF]" iconColor="text-blue-500"
+          trend="Total investors from sheet" trendColor="text-blue-600"
+        />
+        <StatCard
+          label="Rental Income"
+          value={formatCurrency(0)}
+          icon={Building} iconBg="bg-[#DDA04E1A]" iconColor="text-[#DDA04E]"
+          trend="Total approved rent collected" trendColor="text-teal-600"
+        />
+        <StatCard
+          label="Action Required" value="0"
+          icon={AlertCircle} iconBg="" iconColor="text-red-500"
+          trend="Pending rent payment requests" trendColor="text-gray-400" dark
+        />
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
-            Properties Portfolio
-          </h2>
 
+        {/* Assets Portfolio Table — from sheet */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Assets Portfolio</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Name</th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Expected ROI</th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Property Type</th>
-                  <th className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">Status</th>
-                  
-                  
+                  {["Project", "No. of Clients", "A.U.M per Project", "Asset Type"].map(h => (
+                    <th key={h} className="text-left py-3 px-4 text-gray-600 text-xs font-semibold uppercase tracking-wider">{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {/* {properties.map((property) => (
-                  <tr
-                    key={property.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition duration-200"
-                  >
-                    <td className="py-4 px-4 text-gray-900 font-medium">
-                      {property.name}
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">
-                      {property.clients}
-                    </td>
-                    <td className="py-4 px-4 text-gray-700 font-semibold">
-                      {property.aum}
-                    </td>
+                {loading ? (
+                  <tr><td colSpan={4} className="py-8 text-center text-sm text-gray-400">Loading from sheet...</td></tr>
+                ) : portfolio.length === 0 ? (
+                  <tr><td colSpan={4} className="py-8 text-center text-sm text-gray-400">No properties found in sheet.</td></tr>
+                ) : portfolio.map((p) => (
+                  <tr key={p.name} className="border-b border-gray-100 hover:bg-gray-50 transition duration-200">
+                    <td className="py-4 px-4 text-gray-900 font-medium">{p.name}</td>
+                    <td className="py-4 px-4 text-gray-700">{p.clientCount}</td>
+                    <td className="py-4 px-4 text-gray-700 font-semibold">{formatCurrency(p.aum)}</td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${getPriorityDot(property.priority)}`}
-                        ></div>
-                        <span className="text-gray-700 text-sm font-medium capitalize">
-                          {property.priority}
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                ))} */}
-                {loadingProps ? (
-                  <tr>
-                    <td colSpan={4} className="py-6 text-center text-sm text-gray-400">Loading...</td>
-                  </tr>
-                ) : properties.map((property) => (
-                  <tr key={property._id} className="border-b border-gray-100 hover:bg-gray-50 transition duration-200">
-                    <td className="py-4 px-4 text-gray-900 font-medium">{property.name}</td>
-                    <td className="py-4 px-4 text-gray-700">{property.expected_roi}%</td>
-                    <td className="py-4 px-4 text-gray-700 capitalize">{property.property_type}</td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
-                        property.status === "active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}>
-                        {property.status}
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold capitalize bg-[#DDA04E1A] text-[#DDA04E]">
+                        {p.type}
                       </span>
                     </td>
                   </tr>
@@ -244,41 +145,36 @@ const [loadingProps, setLoadingProps] = useState(true);
           </div>
         </div>
 
-        {/* Top Investors */}
+        {/* Top Investors — from sheet */}
         <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Top Investors
-          </h2>
-          <p className="text-gray-500 text-sm mb-6">Latest rent transactions</p>
-
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Top Investors</h2>
+          <p className="text-gray-500 text-sm mb-6">Highest investment per client</p>
           <div className="space-y-4">
-            {transactions.map((transaction, index) => (
-              <div
-                key={transaction.id}
-                className="pb-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 p-3 rounded-lg transition duration-200"
-              >
+            {loading ? (
+              <p className="text-sm text-gray-400 text-center py-4">Loading...</p>
+            ) : topInvestors.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-4">No investors yet.</p>
+            ) : topInvestors.map((inv) => (
+              <div key={inv.email} className="pb-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 p-3 rounded-lg transition duration-200">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-black font-semibold text-sm">JD</span>
+                    <span className="text-black font-semibold text-sm">{getInitials(inv.fullName)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-gray-900 font-semibold text-sm">
-                      {transaction.name}
-                    </p>
+                    <p className="text-gray-900 font-semibold text-sm">{inv.fullName}</p>
                     <p className="text-gray-500 text-xs truncate">
-                      {transaction.details}
+                      {inv.propertiesCount} {inv.propertiesCount === 1 ? "property" : "properties"}
                     </p>
                   </div>
                   <p className="text-[#00A63E] font-bold text-sm whitespace-nowrap ml-2">
-                    {transaction.amount}
+                    {formatCurrency(inv.totalInvestment)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
-
           <button className="w-full mt-6 py-3 text-gray-900 font-semibold hover:bg-gray-50 rounded-lg transition duration-200 border border-gray-200">
-            View All Transactions
+            View All Investors
           </button>
         </div>
       </div>
@@ -286,6 +182,7 @@ const [loadingProps, setLoadingProps] = useState(true);
       <AddPropertyModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={loadSheetData}
       />
     </div>
   );

@@ -1,3 +1,5 @@
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://hinansho-client-portal-backend.onrender.com";
 const API_BASE_URL = 'https://hinansho-client-portal-backend.onrender.com';
 
 export async function POST(req) {
