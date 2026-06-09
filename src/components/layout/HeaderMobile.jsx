@@ -24,10 +24,11 @@ function getUserFromStorage() {
 
 function getFirstName(user) {
   if (!user) return "there";
+  // ✅ Check firstname field first (how we store it in MongoDB)
+  if (user.firstname?.trim()) return user.firstname.trim();
   const full = user.fullName?.trim() || user.name?.trim();
   if (full) return full.split(" ")[0];
   if (user.username) return user.username;
-  if (user.email) return user.email.split("@")[0];
   return "there";
 }
 
@@ -74,11 +75,7 @@ export default function HeaderMobile() {
 
       {/* Right: bell + hamburger */}
       <div className="flex items-center gap-3">
-
-        {/* 🔔 Real notification bell */}
         <NotificationBell />
-
-        {/* Hamburger */}
         <button
           onClick={() => setOpenSidebar(true)}
           className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition"

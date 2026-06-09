@@ -5,6 +5,7 @@ import { LuWallet } from "react-icons/lu";
 import { PiBuildingsBold } from "react-icons/pi";
 import { GiWheat } from "react-icons/gi";
 import { apiRequest } from "@/lib/apiClient";
+import { LuLeaf } from "react-icons/lu";
 
 const formatCurrency = (amount) => {
   if (!amount && amount !== 0) return "₦0.00";
@@ -90,7 +91,7 @@ export default function BalanceCard() {
         <SummaryCard
           title="AGRO RETURNS"
           value={formatCurrency(0)}
-          dark icon={<LuWallet />} loading={false}
+          dark icon={<LuLeaf />} loading={false}
         />
       </div>
 

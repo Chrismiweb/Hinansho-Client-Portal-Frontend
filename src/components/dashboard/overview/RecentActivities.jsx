@@ -28,113 +28,124 @@ export default function RecentActivities() {
   }, []);
 
   return (
-    <div className="py-[20px] md:py-[40px] px-[20px] lg:px-[38px] border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm">
+    <div className="py-6 px-4 md:px-8 border-2 border-[#F1F5F9] rounded-3xl bg-white shadow-sm w-full overflow-hidden">
 
-      {/* Header */}
-      <div className="flex justify-between mb-7">
+      <div className="flex justify-between mb-6">
         <h3 className="font-semibold text-[20px] md:text-[24px]">Recent Activities</h3>
       </div>
 
-      {/* Loading */}
       {loading && (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="animate-pulse flex items-center gap-4 py-3">
-              <div className="w-12 h-12 bg-gray-100 rounded-2xl flex-shrink-0" />
+              <div className="w-10 h-10 bg-gray-100 rounded-2xl flex-shrink-0" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-100 rounded w-32" />
-                <div className="h-3 bg-gray-50 rounded w-20" />
+                <div className="h-4 bg-gray-100 rounded w-24" />
+                <div className="h-3 bg-gray-50 rounded w-16" />
               </div>
-              <div className="h-4 bg-gray-100 rounded w-20 hidden md:block" />
-              <div className="h-4 bg-gray-100 rounded w-16 hidden md:block" />
-              <div className="h-4 bg-gray-100 rounded w-24 hidden md:block" />
             </div>
           ))}
         </div>
       )}
 
-      {/* Error */}
       {!loading && error && (
         <p className="text-sm text-red-400 text-center py-6">Failed to load: {error}</p>
       )}
 
-      {/* Empty */}
       {!loading && !error && properties.length === 0 && (
         <p className="text-sm text-gray-400 text-center py-8">No activities found.</p>
       )}
 
-      {/* Table */}
+      {/* Desktop — proper table */}
       {!loading && !error && properties.length > 0 && (
-        <div className="overflow-x-auto">
-          {/* Table headers */}
-          <div className="hidden md:grid grid-cols-[auto_1fr_140px_120px_120px_130px] items-center gap-4 px-2 mb-3">
-            <div className="w-12" />
-            <p className="text-[12px] font-semibold text-[#90A1B9] uppercase tracking-wider">Property</p>
-            <p className="text-[12px] font-semibold text-[#90A1B9] uppercase tracking-wider">Receivable</p>
-            <p className="text-[12px] font-semibold text-[#90A1B9] uppercase tracking-wider">Received</p>
-            <p className="text-[12px] font-semibold text-[#90A1B9] uppercase tracking-wider">Balance</p>
-            <p className="text-[12px] font-semibold text-[#90A1B9] uppercase tracking-wider">Purchase Date</p>
-          </div>
+        <div className="hidden md:block w-full overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-[#F1F5F9]">
+                <th className="w-14 pb-3" />
+                <th className="text-left pb-3 text-[11px] font-semibold text-[#90A1B9] uppercase tracking-wider">Property</th>
+                <th className="text-right pb-3 text-[11px] font-semibold text-[#90A1B9] uppercase tracking-wider px-3">Receivable</th>
+                <th className="text-right pb-3 text-[11px] font-semibold text-[#90A1B9] uppercase tracking-wider px-3">Received</th>
+                <th className="text-right pb-3 text-[11px] font-semibold text-[#90A1B9] uppercase tracking-wider px-3">Balance</th>
+                <th className="text-right pb-3 text-[11px] font-semibold text-[#90A1B9] uppercase tracking-wider pl-3">Purchase Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {properties.map((item, idx) => {
+                const hasBalance = item.balance > 0;
+                return (
+                  <tr key={idx} className="border-b border-[#F8FAFC] hover:bg-[#F8FAFC] transition">
+                    <td className="py-4 pr-2">
+                      <div className="w-10 h-10 rounded-2xl bg-[#F0FDF4] flex items-center justify-center">
+                        <GoArrowUpRight className="text-[#00A63E] text-[18px]" />
+                      </div>
+                    </td>
+                    <td className="py-4 pr-3">
+                      <p className="text-[14px] font-semibold text-[#0F172A]">{item.name}</p>
+                    </td>
+                    <td className="py-4 px-3 text-right">
+                      <p className="text-[14px] font-semibold text-[#0F172A] whitespace-nowrap">
+                        {formatCurrency(item.receivable)}
+                      </p>
+                    </td>
+                    <td className="py-4 px-3 text-right">
+                      <p className="text-[14px] font-medium text-[#00A63E] whitespace-nowrap">
+                        {formatCurrency(item.received)}
+                      </p>
+                    </td>
+                    <td className="py-4 px-3 text-right">
+                      <p className={`text-[14px] font-semibold whitespace-nowrap ${hasBalance ? "text-red-500" : "text-[#00A63E]"}`}>
+                        {hasBalance ? formatCurrency(item.balance) : "Paid ✓"}
+                      </p>
+                    </td>
+                    <td className="py-4 pl-3 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <RxDotFilled className="text-[#DDA04E] text-[16px] flex-shrink-0" />
+                        <p className="text-[13px] text-[#90A1B9] whitespace-nowrap">{item.date || "—"}</p>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-          <div className="space-y-3">
-            {properties.map((item, idx) => {
-              const hasBalance = item.balance > 0;
-              return (
-                <div
-                  key={idx}
-                  className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_140px_120px_120px_130px] items-center gap-4 p-3 rounded-2xl hover:bg-[#F8FAFC] transition"
-                >
-                  {/* Icon */}
-                  <div className="text-[22px] p-3 rounded-2xl bg-[#F0FDF4] text-[#00A63E] inline-block flex-shrink-0">
-                    <GoArrowUpRight />
+      {/* Mobile — card layout */}
+      {!loading && !error && properties.length > 0 && (
+        <div className="flex flex-col gap-3 md:hidden">
+          {properties.map((item, idx) => {
+            const hasBalance = item.balance > 0;
+            return (
+              <div key={idx} className="bg-[#F8FAFC] rounded-2xl p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                    <GoArrowUpRight className="text-[#00A63E] text-[16px]" />
                   </div>
-
-                  {/* Property name + date (mobile) */}
                   <div>
                     <p className="text-[15px] font-semibold text-[#0F172A]">{item.name}</p>
-                    <div className="flex items-center gap-1 md:hidden">
-                      <RxDotFilled className="text-[#DDA04E]" />
+                    <div className="flex items-center gap-1">
+                      <RxDotFilled className="text-[#DDA04E] text-[14px]" />
                       <p className="text-[12px] text-[#90A1B9]">{item.date || "—"}</p>
                     </div>
-                    {/* Mobile amounts */}
-                    <div className="flex gap-3 mt-1 md:hidden text-[12px]">
-                      <span className="text-[#0F172A] font-medium">{formatCurrency(item.receivable)}</span>
-                      {hasBalance && (
-                        <span className="text-red-500 font-medium">Bal: {formatCurrency(item.balance)}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Receivable */}
-                  <div className="hidden md:block">
-                    <p className="text-[14px] font-semibold text-[#0F172A]">
-                      {formatCurrency(item.receivable)}
-                    </p>
-                  </div>
-
-                  {/* Received */}
-                  <div className="hidden md:block">
-                    <p className="text-[14px] font-medium text-[#00A63E]">
-                      {formatCurrency(item.received)}
-                    </p>
-                  </div>
-
-                  {/* Balance Outstanding */}
-                  <div className="hidden md:block">
-                    <p className={`text-[14px] font-semibold ${hasBalance ? "text-red-500" : "text-[#00A63E]"}`}>
-                      {hasBalance ? formatCurrency(item.balance) : "Paid ✓"}
-                    </p>
-                  </div>
-
-                  {/* Purchase Date */}
-                  <div className="hidden md:flex items-center gap-1">
-                    <RxDotFilled className="text-[#DDA04E] text-[18px]" />
-                    <p className="text-[13px] text-[#90A1B9]">{item.date || "—"}</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  {[
+                    { label: "Receivable", value: formatCurrency(item.receivable), color: "text-[#0F172A]" },
+                    { label: "Received",   value: formatCurrency(item.received),   color: "text-[#00A63E]" },
+                    { label: "Balance",    value: hasBalance ? formatCurrency(item.balance) : "Paid ✓", color: hasBalance ? "text-red-500" : "text-[#00A63E]" },
+                  ].map(col => (
+                    <div key={col.label} className="bg-white rounded-xl p-2">
+                      <p className="text-[10px] text-[#90A1B9] uppercase tracking-wide mb-0.5">{col.label}</p>
+                      <p className={`text-[12px] font-semibold ${col.color}`}>{col.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

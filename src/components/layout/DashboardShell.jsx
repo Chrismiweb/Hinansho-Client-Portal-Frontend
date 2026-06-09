@@ -6,7 +6,7 @@ import MobileSidebar from "@/components/layout/MobileSidebar";
 
 export default function DashboardShell({ children }) {
   return (
-    <div className="min-h-screen flex gap-[40px] lg:pr-10 lg:pl-2.5 bg-[#F7F9FB]">
+    <div className="min-h-screen flex gap-[5px] lg:pr-0 lg:pl-0 bg-[#F7F9FB]">
       
       {/* Sidebar */}
       <aside className="h-auto hidden lg:block pt-7.5 pl-7.5">

@@ -62,7 +62,7 @@ function Overview() {
   const topInvestors = sheetData?.topInvestors || [];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-0">
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -146,7 +146,7 @@ function Overview() {
         </div>
 
         {/* Top Investors — from sheet */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
+        <div className="bg-white rounded-2xl p-4 shadow-lg">
           <h2 className="text-xl font-bold text-gray-900 mb-2">Top Investors</h2>
           <p className="text-gray-500 text-sm mb-6">Highest investment per client</p>
           <div className="space-y-4">
@@ -155,27 +155,29 @@ function Overview() {
             ) : topInvestors.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-4">No investors yet.</p>
             ) : topInvestors.map((inv) => (
-              <div key={inv.email} className="pb-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 p-3 rounded-lg transition duration-200">
+              <div key={inv.email} className="pb-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 p-2 rounded-lg transition duration-200">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-black font-semibold text-sm">{getInitials(inv.fullName)}</span>
+                  <div className="w-8 h-8 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0">
+                    <span className="text-black font-semibold text-[10px]">{getInitials(inv.fullName)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-gray-900 font-semibold text-sm">{inv.fullName}</p>
-                    <p className="text-gray-500 text-xs truncate">
+                    <p className="text-gray-900 font-semibold w-[70%] text-[12px]">{inv.fullName}</p>
+                    <p className="text-gray-500 text-[11px] truncate">
                       {inv.propertiesCount} {inv.propertiesCount === 1 ? "property" : "properties"}
                     </p>
                   </div>
-                  <p className="text-[#00A63E] font-bold text-sm whitespace-nowrap ml-2">
+                  <p className="text-[#00A63E] font-bold text-[12px] whitespace-nowrap ml-2">
                     {formatCurrency(inv.totalInvestment)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+          <a href="/admin/sheet">
           <button className="w-full mt-6 py-3 text-gray-900 font-semibold hover:bg-gray-50 rounded-lg transition duration-200 border border-gray-200">
             View All Investors
           </button>
+          </a>
         </div>
       </div>
 

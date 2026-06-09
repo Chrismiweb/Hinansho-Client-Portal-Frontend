@@ -11,25 +11,31 @@ const formatCurrency = (n) => {
   return `₦${n.toLocaleString()}`;
 };
 
+// ── Detect measurement label per property type ────────────────────────────────
+const getMeasurement = (name = "", sqm = 0) => {
+  if (!sqm) return null;
+  const n = name.toLowerCase();
+  if (n.includes("pavilion") || n.includes("pavillion"))
+    return { label: "Units Owned", value: `${sqm.toLocaleString()} unit${sqm !== 1 ? "s" : ""}` };
+  if (n.includes("verda") || n.includes("farm"))
+    return { label: "Hectares Owned", value: `${sqm.toLocaleString()} ha` };
+  return { label: "SQM Owned", value: `${sqm.toLocaleString()} sqm` };
+};
+
 export default function PortfolioCard({ data }) {
   const [imgUrl, setImgUrl] = useState(null);
 
   useEffect(() => {
-    // Fetch plot allocation image from Drive for this property
     apiRequest(`/investor/drive-property-images?property=${encodeURIComponent(data.name)}`)
       .then(res => {
-        if (res.success && res.images?.length > 0) {
-          setImgUrl(res.images[0].thumbnailUrl);
-        }
+        if (res.success && res.images?.length > 0) setImgUrl(res.images[0].thumbnailUrl);
       })
       .catch(() => {});
   }, [data.name]);
 
-  const progress = data.receivable > 0
-    ? Math.round((data.received / data.receivable) * 100)
-    : 100;
-
-  const isPaid = data.balance === 0;
+  const progress = data.receivable > 0 ? Math.round((data.received / data.receivable) * 100) : 100;
+  const isPaid   = data.balance === 0;
+  const measurement = getMeasurement(data.name, data.sqm);
 
   return (
     <div className="bg-white border border-[#0000001A] rounded-2xl overflow-hidden">
@@ -45,7 +51,6 @@ export default function PortfolioCard({ data }) {
             </div>
           </div>
         )}
-        {/* Status badge */}
         <span className={`absolute top-3 right-3 text-[11px] font-bold px-3 py-1 rounded-full ${
           isPaid ? "bg-[#F0FDF4] text-[#008236]" : "bg-[#FFFBEB] text-[#E17100]"
         }`}>
@@ -62,17 +67,14 @@ export default function PortfolioCard({ data }) {
           </p>
         )}
 
-        {/* Progress bar */}
         <div className="mt-4">
           <div className="flex justify-between text-[13px] text-[#62748E] mb-1">
             <span>Payment Progress</span>
             <span className="font-semibold">{progress}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full">
-            <div
-              className={`h-2 rounded-full transition-all ${isPaid ? "bg-[#00C950]" : "bg-[#0F172A]"}`}
-              style={{ width: `${progress}%` }}
-            />
+            <div className={`h-2 rounded-full transition-all ${isPaid ? "bg-[#00C950]" : "bg-[#0F172A]"}`}
+              style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -91,10 +93,11 @@ export default function PortfolioCard({ data }) {
               <span className="font-medium text-red-500">{formatCurrency(data.balance)}</span>
             </div>
           )}
-          {data.sqm > 0 && (
+          {/* ✅ Smart measurement label */}
+          {measurement && (
             <div className="flex justify-between text-[13px]">
-              <span className="text-[#62748E]">SQM Owned</span>
-              <span className="font-medium">{data.sqm.toLocaleString()} sqm</span>
+              <span className="text-[#62748E]">{measurement.label}</span>
+              <span className="font-medium">{measurement.value}</span>
             </div>
           )}
         </div>

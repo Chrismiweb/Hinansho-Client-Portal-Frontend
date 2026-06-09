@@ -23,10 +23,13 @@ function getUserFromStorage() {
 
 function getFirstName(user) {
   if (!user) return "there";
+  // ✅ Check firstname field first (how we store it in MongoDB)
+  if (user.firstname?.trim()) return user.firstname.trim();
+  // Then try fullName or name
   const full = user.fullName?.trim() || user.name?.trim();
   if (full) return full.split(" ")[0];
+  // Last resort — username (never email prefix)
   if (user.username) return user.username;
-  if (user.email) return user.email.split("@")[0];
   return "there";
 }
 
@@ -58,7 +61,7 @@ export default function Header() {
       {/* Right: Search + Bell + Avatar */}
       <div className="flex items-center gap-4">
         {/* Search */}
-        <div className="relative hidden md:block">
+        {/* <div className="relative hidden md:block">
           <input
             type="text"
             placeholder="Search..."
@@ -69,9 +72,8 @@ export default function Header() {
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
           </svg>
-        </div>
+        </div> */}
 
-        {/* 🔔 Real notification bell */}
         <NotificationBell />
 
         {/* Avatar */}

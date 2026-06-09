@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} antialiased`}
       >
-        <div className="min-h-screen bg-[#F7F9FB] lg:pt-[30px] lg:px-[30px]">
+        <div className="min-h-screen bg-[#F7F9FB] lg:pt-[30px] lg:px-[20px]">
           {/* Main */}
           <div className="flex-1 flex flex-col">
             {/* <Header />
