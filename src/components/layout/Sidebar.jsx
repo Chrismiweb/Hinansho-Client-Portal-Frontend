@@ -96,8 +96,8 @@ export default function Sidebar() {
   return (
     <aside className="bg-white rounded-3xl py-[37px] px-4 flex flex-col shadow-lg">
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-2.5">
-        <img src="/assets/dashboardLogo.png" alt="" />
+      <div className="flex items-center justify-center gap-3 mb-2.5">
+        <img src="/assets/logo2323-removebg-preview (1).png" className="w-[55%]" alt="" />
       </div>
 
       {/* MENU */}

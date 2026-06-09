@@ -3,22 +3,35 @@
 import { useState } from "react";
 import { FiSearch, FiDownload, FiExternalLink } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { LuMapPin } from "react-icons/lu";
 
 const TABS = [
-  { key: "all",              label: "All"              },
-  { key: "plot_allocations", label: "Plot Allocations" },
-  { key: "receipts",         label: "Receipts"         },
-  { key: "invoices",         label: "Invoices"         },
-  { key: "others",           label: "Other"            },
+  { key: "all",      label: "All"      },
+  { key: "deed",     label: "Deed"     },
+  { key: "survey",   label: "Survey"   },
+  { key: "receipts", label: "Receipts" },
+  { key: "others",   label: "Others"   },
 ];
 
 const TYPE_STYLES = {
   plot_allocation: { bg: "bg-[#DCFCE7]", color: "text-[#00A63E]",  label: "Plot Allocation" },
   receipt:         { bg: "bg-[#EFF6FF]", color: "text-blue-600",    label: "Receipt"         },
   invoice:         { bg: "bg-[#FFFBEB]", color: "text-[#E17100]",   label: "Invoice"         },
+  deed:            { bg: "bg-[#F5F3FF]", color: "text-purple-600",  label: "Deed"            },
+  survey:          { bg: "bg-[#CFFAFE]", color: "text-[#155E75]",   label: "Survey"          },
   contract:        { bg: "bg-[#F5F3FF]", color: "text-purple-600",  label: "Contract"        },
   document:        { bg: "bg-[#F1F5F9]", color: "text-[#64748B]",   label: "Document"        },
+};
+
+// ── Classify doc into new tab categories ─────────────────────────────────────
+const classifyDoc = (doc) => {
+  const name = (doc.name || '').toLowerCase();
+  const type = (doc.type || '').toLowerCase();
+  if (name.includes('deed') || type === 'deed')               return 'deed';
+  if (name.includes('survey') || type === 'survey')           return 'survey';
+  if (name.includes('receipt') || type === 'receipt')         return 'receipts';
+  if (name.includes('invoice') || type === 'invoice')         return 'receipts';
+  if (name.includes('plot allocation') || type === 'plot_allocation') return 'others';
+  return 'others';
 };
 
 const isImage = (mimeType = '') => mimeType.startsWith('image/');
@@ -94,22 +107,23 @@ export default function SectionTwo({ grouped = {}, plotAllocations = [], documen
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch]       = useState("");
 
+  // Combine all docs and classify them
+  const allDocs = [...plotAllocations, ...documents];
+
   const getFiles = () => {
-    if (activeTab === "all")              return [...plotAllocations, ...documents];
-    if (activeTab === "plot_allocations") return plotAllocations;
-    return grouped[activeTab] || [];
+    if (activeTab === "all") return allDocs;
+    return allDocs.filter(f => classifyDoc(f) === activeTab);
   };
 
   const getCount = (key) => {
-    if (key === "all")              return plotAllocations.length + documents.length;
-    if (key === "plot_allocations") return plotAllocations.length;
-    return (grouped[key] || []).length;
+    if (key === "all") return allDocs.length;
+    return allDocs.filter(f => classifyDoc(f) === key).length;
   };
 
   const filtered = getFiles().filter(f =>
     !search.trim() ||
-    f.name.toLowerCase().includes(search.toLowerCase()) ||
-    f.property.toLowerCase().includes(search.toLowerCase())
+    (f.name || '').toLowerCase().includes(search.toLowerCase()) ||
+    (f.property || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (

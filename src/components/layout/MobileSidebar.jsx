@@ -105,7 +105,7 @@ export default function MobileSidebar({ open, onClose }) {
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <img src="/assets/dashboardLogo.png" alt="logo" className="h-11" />
+          <img src="/assets/logo2323-removebg-preview (1).png" alt="logo" className="w-[50%]" />
           <button onClick={onClose}><XMarkIcon className="w-6 h-6 text-gray-600" /></button>
         </div>
 

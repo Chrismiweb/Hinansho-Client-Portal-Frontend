@@ -125,7 +125,7 @@ function Login() {
 
           {/* Top — Logo + heading */}
           <div className="flex flex-col items-center mb-8">
-            <img src="/assets/logo-removebg-preview.png" alt="Logo" className="w-10 h-10 mb-4" />
+            <img src="/assets/logo4567-removebg-preview.png" alt="Logo" className="w-[25%] mb-4" />
             {/* <p className="text-white/70 text-[13px] font-medium mb-1">Join Hinansho</p> */}
             <h1 className="text-white text-[28px] font-bold text-center leading-tight">
               Sign in to your account

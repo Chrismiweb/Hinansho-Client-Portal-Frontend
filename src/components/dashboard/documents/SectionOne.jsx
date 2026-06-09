@@ -1,53 +1,65 @@
-import {
-  DocumentTextIcon,
-  EyeIcon,
-  ArrowDownTrayIcon,
-} from "@heroicons/react/24/outline";
-import { MdArrowOutward } from "react-icons/md";
+import { DocumentTextIcon, EyeIcon } from "@heroicons/react/24/outline";
 
-export default function SectionOne({ totalDocuments = 0, propertiesCount = 0, newThisMonth = 0 }) {
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+  const now  = new Date();
+  const date = new Date(dateStr);
+  const diff = Math.floor((now - date) / 60000); // minutes
+  if (diff < 1)   return "Just now";
+  if (diff < 60)  return `${diff}m ago`;
+  if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+};
+
+export default function SectionOne({ totalDocuments = 0, propertiesCount = 0, recentDoc = null }) {
   return (
     <div className="w-full px-[20px] md:px-0">
-      {/* <button className="inline-flex items-center  gap-2 mb-6 bg-[#0F172B] text-white px-5 py-2.5 rounded-full text-[16px]">
-        <ArrowDownTrayIcon className="w-4 h-4 " />
-        Download All New
-      </button> */}
+      <div className="flex lg:flex-row flex-col w-full items-center lg:items-start gap-4">
 
-      <div className="flex lg:flex-row flex-col w-full items-center lg:items-start justify-between gap-4">
         {/* Total Documents */}
-        <div className="bg-[#0F172A] text-white w-full lg:w-[32%] rounded-[32px] p-6">
-          {/* <div className=" rounded-[16px] bg-[#FFFFFF1A] flex items-center justify-center mb-4"> */}
-            <DocumentTextIcon className="w-6 h-6 text-[#DDA04E] mb-3" />
-          {/* </div> */}
+        <div className="bg-[#0F172A] text-white w-full lg:w-[30%] min-h-[30vh] rounded-[32px] p-6">
+          <DocumentTextIcon className="w-6 h-6 text-[#DDA04E] mb-3" />
           <p className="text-[16px] text-[#90A1B9]">Total Documents</p>
           <h2 className="text-[41px] font-bold mt-2">{totalDocuments}</h2>
           <p className="text-[14px] text-[#90A1B9] mt-1">Across {propertiesCount} properties</p>
         </div>
 
-        {/* New This Month u*/}
-        <div className="bg-white rounded-[32px] w-full lg:w-[32%] p-6 border border-[#F1F5F9]">
-          {/* <div className="w-13 h-13 rounded-[16px] bg-[#F0FDF4] flex items-center justify-center mb-4"> */}
-            <MdArrowOutward className="w-6 h-6 text-[#00A63E] mb-3" />
-          {/* </div> */}
-          <p className="text-[16px] text-[#90A1B9]">New This Month</p>
-          <h2 className="text-[41px] font-bold mt-2">{newThisMonth}</h2>
-          <span className="inline-block mt-2 text-[14px] px-3 py-1 rounded-full bg-[#F0FDF4] text-[#00A63E] font-bold">
-            All downloaded
-          </span>
+        {/* Recently Added */}
+        <div className="bg-white gap-[7px] flex flex-col rounded-[32px] w-full lg:w-[30%] min-h-[30vh] p-6 border border-[#F1F5F9]">
+          <EyeIcon className="w-6 h-6 text-[#DDA04E] mb-3" />
+          <p className="text-[16px] text-[#90A1B9]">Recently Added</p>
+          {recentDoc ? (
+            <>
+              <h3 className="font-semibold mt-2 truncate text-[18px] text-[#0F172A]">
+                {recentDoc.name}
+              </h3>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <span className="text-[12px] bg-[#FFFBEB] text-[#DDA04E] font-medium px-2.5 py-0.5 rounded-full">
+                  {recentDoc.property}
+                </span>
+                <p className="text-[13px] text-[#90A1B9]">{formatDate(recentDoc.modifiedTime)}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="font-semibold mt-2 text-[18px] text-[#94A3B8]">No documents yet</h3>
+              <p className="text-[13px] text-[#90A1B9] mt-2">—</p>
+            </>
+          )}
         </div>
 
-        {/* Recently Viewed */}
-        <div className="bg-white rounded-[32px] w-full lg:w-[32%] p-6 border border-[#F1F5F9]">
-          {/* <div className="w-13 h-13 rounded-[16px] bg-[#DDA04E1A] flex items-center justify-center mb-4"> */}
-            <EyeIcon className="w-6 h-6 text-[#DDA04E] mb-3" />
-          {/* </div> */}
-          <p className="text-[16px] text-[#90A1B9]">Recently Viewed</p>
-          <h3 className="font-semibold mt-2 truncate text-[20px]">
-            Q1 2024 Performance...
-          </h3>
-          <p className="text-[14px] text-[#90A1B9] mt-3">Just now</p>
-        </div>
       </div>
     </div>
   );
 }
+// DocumentsPage.jsx — updated SectionOne call:
+// 
+// const recentDoc = allDocs.length > 0
+//   ? allDocs.sort((a, b) => new Date(b.modifiedTime) - new Date(a.modifiedTime))[0]
+//   : null;
+//
+// <SectionOne
+//   totalDocuments={allDocs.length}
+//   propertiesCount={properties}
+//   recentDoc={recentDoc}
+// />

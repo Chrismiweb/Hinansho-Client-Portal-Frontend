@@ -6,9 +6,9 @@ import PreviewModal from './PreviewModal';
 import { apiRequest } from "@/lib/apiClient";
 
 function DocumentsPage() {
-  const [data, setData]           = useState(null);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
+  const [data, setData]             = useState(null);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
 
   useEffect(() => {
@@ -21,15 +21,13 @@ function DocumentsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Combine all docs for stats
-  const allDocs     = data ? [...(data.plotAllocations || []), ...(data.documents || [])] : [];
-  const properties  = new Set(allDocs.map(d => d.property)).size;
-  const newThisMonth = allDocs.filter(d => {
-    try {
-      const now = new Date();
-      return new Date(d.modifiedTime) > new Date(now.getFullYear(), now.getMonth(), 1);
-    } catch { return false; }
-  }).length;
+  const allDocs      = data ? [...(data.plotAllocations || []), ...(data.documents || [])] : [];
+  const properties   = new Set(allDocs.map(d => d.property)).size;
+
+  // ✅ Most recently modified document
+  const recentDoc = allDocs.length > 0
+    ? [...allDocs].sort((a, b) => new Date(b.modifiedTime) - new Date(a.modifiedTime))[0]
+    : null;
 
   return (
     <div className="flex flex-col gap-5 items-center justify-center lg:items-start lg:justify-start w-full">
@@ -53,7 +51,7 @@ function DocumentsPage() {
           <SectionOne
             totalDocuments={allDocs.length}
             propertiesCount={properties}
-            newThisMonth={newThisMonth}
+            recentDoc={recentDoc}
           />
           <SectionTwo
             grouped={data?.grouped || {}}
