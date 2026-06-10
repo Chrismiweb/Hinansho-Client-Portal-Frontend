@@ -19,9 +19,10 @@ const CATEGORIES = [
 // ── Classify property into a category ────────────────────────────────────────
 const classifyProperty = (name = "") => {
   const n = name.toLowerCase();
-  if (n.includes("verda") || n.includes("farm")) return "farm";
-  if (n.includes("apartment") || n.includes("studio")) return "apartment";
-  if (n.includes("hr") || n.includes("land") || n.includes("pavilion") || n.includes("pavillion")) return "land";
+  if (n.includes("verda") || n.includes("farm"))            return "farm";
+  if (n.includes("pavilion") || n.includes("pavillion") ||
+      n.includes("apartment") || n.includes("studio"))      return "apartment";
+  if (n.includes("hr") || n.includes("land"))               return "land";
   return "land"; // default
 };
 
@@ -127,7 +128,7 @@ const StatsCard = () => {
 
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-bold text-slate-900">Portfolio Stats</h2>
+        <h2 className="text-lg font-bold text-slate-900">Statistics</h2>
       </div>
 
       {/* Donut Chart */}

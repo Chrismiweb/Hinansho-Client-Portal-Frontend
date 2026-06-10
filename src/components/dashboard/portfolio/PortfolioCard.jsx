@@ -11,14 +11,12 @@ const formatCurrency = (n) => {
   return `₦${n.toLocaleString()}`;
 };
 
-// ── Detect measurement label per property type ────────────────────────────────
 const getMeasurement = (name = "", sqm = 0) => {
   if (!sqm) return null;
   const n = name.toLowerCase();
   if (n.includes("pavilion") || n.includes("pavillion"))
     return { label: "Units Owned", value: `${sqm.toLocaleString()} unit${sqm !== 1 ? "s" : ""}` };
-  if (n.includes("verda") || n.includes("farm"))
-    return { label: "Hectares Owned", value: `${sqm.toLocaleString()} ha` };
+  // Verda Farms and everything else → sqm
   return { label: "SQM Owned", value: `${sqm.toLocaleString()} sqm` };
 };
 
@@ -33,13 +31,12 @@ export default function PortfolioCard({ data }) {
       .catch(() => {});
   }, [data.name]);
 
-  const progress = data.receivable > 0 ? Math.round((data.received / data.receivable) * 100) : 100;
-  const isPaid   = data.balance === 0;
+  const progress    = data.receivable > 0 ? Math.round((data.received / data.receivable) * 100) : 100;
+  const isPaid      = data.balance === 0;
   const measurement = getMeasurement(data.name, data.sqm);
 
   return (
     <div className="bg-white border border-[#0000001A] rounded-2xl overflow-hidden">
-      {/* Image */}
       <div className="h-48 w-full bg-[#F1F5F9] relative overflow-hidden">
         {imgUrl ? (
           <img src={imgUrl} className="w-full h-full object-cover" alt={data.name} />
@@ -93,7 +90,6 @@ export default function PortfolioCard({ data }) {
               <span className="font-medium text-red-500">{formatCurrency(data.balance)}</span>
             </div>
           )}
-          {/* ✅ Smart measurement label */}
           {measurement && (
             <div className="flex justify-between text-[13px]">
               <span className="text-[#62748E]">{measurement.label}</span>

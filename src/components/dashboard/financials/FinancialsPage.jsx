@@ -11,7 +11,6 @@ function FinancialsPage() {
         <ActivePlans/>
         <TransactionHistory />
         {/* <PaymentHistoryMobile/> */}
-
     </div>
   )
 }
