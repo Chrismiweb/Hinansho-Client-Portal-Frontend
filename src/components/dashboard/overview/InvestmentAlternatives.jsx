@@ -25,9 +25,9 @@ const CONTACT = {
 // ── Property image map — exact filenames in public/assets/ ────────────────────
 const getPropertyImage = (title = "") => {
   const t = title.toLowerCase().trim();
-  if (t.includes("hr1") || t.includes("hr 1"))                          return "/assets/HR1.jpg";
-  if (t.includes("hr2") || t.includes("hr 2"))                          return "/assets/HR2.jpg";
-  if (t.includes("hr3") || t.includes("hr 3"))                          return "/assets/HR3.jpg";
+  if (t.includes("hr1") || t.includes("hr 1"))                          return "/assets/hr1.jpg";
+  if (t.includes("hr2") || t.includes("hr 2"))                          return "/assets/hr2.jpg";
+  if (t.includes("hr3") || t.includes("hr 3"))                          return "/assets/hr3.jpg";
   if (t.includes("pavilion") || t.includes("pavillion"))                return "/assets/pavillion.jpg";
   if (t.includes("verda") || t.includes("farm"))                        return "/assets/verda farm.jpg";
   return PLACEHOLDER;
