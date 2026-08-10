@@ -341,7 +341,7 @@ export default function EmailConfirmationModal({ email, onClose, onSubmit }) {
           </div>
 
           {error && (
-            <p className="text-red-500 text-[13px] text-center mb-3">❌ {error}</p>
+            <p className="text-red-500 text-[13px] text-center mb-3">{error}</p>
           )}
 
           {resent && (

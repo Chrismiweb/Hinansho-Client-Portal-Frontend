@@ -184,7 +184,7 @@ export default function ResetPasswordModal({ email, userId, onClose, onSubmit })
 
         {success ? (
           <div className="text-center py-4">
-            <div className="text-5xl mb-4">✅</div>
+            {/* <div className="text-5xl mb-4"></div> */}
             <h2 className="text-[22px] font-bold text-[#0F172A] mb-2">Password Reset!</h2>
             <p className="text-[14px] text-[#62748E]">
               Your password has been reset successfully. You can now log in.
@@ -228,7 +228,7 @@ export default function ResetPasswordModal({ email, userId, onClose, onSubmit })
                 />
               </div>
 
-              {error && <p className="text-red-500 text-[13px]">❌ {error}</p>}
+              {error && <p className="text-red-500 text-[13px]"> {error}</p>}
 
               <button type="submit" disabled={loading}
                 className="w-full py-3 bg-[#DDA04E] text-white rounded-xl font-semibold text-[15px] hover:bg-[#C68E3D] transition disabled:opacity-60">
