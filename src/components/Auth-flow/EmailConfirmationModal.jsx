@@ -350,7 +350,7 @@ export default function EmailConfirmationModal({ email, onClose, onSubmit }) {
 
           <button
             type="submit"
-            disabled={loading || otp.join("").length < 6}
+            disabled={loading || otp.join("").length < 5}
             className="w-full py-3 bg-[#0F172A] text-white rounded-xl font-semibold text-[15px] hover:bg-[#1E293B] transition disabled:opacity-60 mb-3"
           >
             {loading ? "Verifying..." : "Verify OTP"}
