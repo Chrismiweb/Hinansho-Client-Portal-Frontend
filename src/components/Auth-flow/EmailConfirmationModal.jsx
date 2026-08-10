@@ -236,8 +236,8 @@ export default function EmailConfirmationModal({ email, onClose, onSubmit }) {
     e.preventDefault();
     setError("");
     const otpString = otp.join("");
-    if (otpString.length < 6) {
-      setError("Please enter all 6 digits.");
+    if (otpString.length < 5) {
+      setError("Please enter all 5 digits.");
       return;
     }
     setLoading(true);
