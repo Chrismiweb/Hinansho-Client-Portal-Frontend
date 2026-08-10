@@ -57,8 +57,8 @@ function Login() {
   };
 
   const closeEmailConfirmationModal  = () => setModalState(p => ({ ...p, showEmailConfirmation: false }));
-  const handleEmailConfirmationSubmit = () => {
-    setModalState(p => ({ ...p, showEmailConfirmation: false, showResetPassword: true }));
+  const handleEmailConfirmationSubmit = (resetToken) => {
+    setModalState(p => ({ ...p, showEmailConfirmation: false, showResetPassword: true, resetToken }));
   };
 
   const closeResetPasswordModal  = () => setModalState(p => ({ ...p, showResetPassword: false, email: "" }));
