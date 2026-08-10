@@ -187,7 +187,7 @@ import { useState, useRef, useEffect } from "react";
 import { BASE_URL } from "@/lib/apiClient";
 
 export default function EmailConfirmationModal({ email, onClose, onSubmit }) {
-  const [otp, setOtp]         = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp]         = useState(["", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [resending, setResending] = useState(false);
@@ -249,8 +249,8 @@ export default function EmailConfirmationModal({ email, onClose, onSubmit }) {
       });
       const data = await res.json();
       if (res.ok) {
-        // ✅ Pass resetToken back to parent
-        onSubmit(data.resetToken);
+        // ✅ Pass userId back to parent
+        onSubmit(data.userId);
       } else {
         setError(data.error || data.message || "Invalid OTP. Please try again.");
       }

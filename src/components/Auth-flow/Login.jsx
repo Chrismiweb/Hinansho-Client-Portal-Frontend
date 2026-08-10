@@ -57,9 +57,9 @@ function Login() {
   };
 
   const closeEmailConfirmationModal  = () => setModalState(p => ({ ...p, showEmailConfirmation: false }));
-  const handleEmailConfirmationSubmit = (resetToken) => {
-    setModalState(p => ({ ...p, showEmailConfirmation: false, showResetPassword: true, resetToken }));
-  };
+const handleEmailConfirmationSubmit = (userId) => {
+  setModalState(p => ({ ...p, showEmailConfirmation: false, showResetPassword: true, userId }));
+};
 
   const closeResetPasswordModal  = () => setModalState(p => ({ ...p, showResetPassword: false, email: "" }));
   const handleResetPasswordSubmit = () => closeResetPasswordModal();
@@ -106,7 +106,7 @@ function Login() {
         <EmailConfirmationModal email={modalState.email} onClose={closeEmailConfirmationModal} onSubmit={handleEmailConfirmationSubmit} />
       )}
       {modalState.showResetPassword && (
-        <ResetPasswordModal email={modalState.email} onClose={closeResetPasswordModal} onSubmit={handleResetPasswordSubmit} />
+        <ResetPasswordModal email={modalState.email} userId={modalState.userId} onClose={closeResetPasswordModal} onSubmit={handleResetPasswordSubmit} />
       )}
 
       {/* ── MOBILE VIEW — full screen background with form overlay ─────────── */}
