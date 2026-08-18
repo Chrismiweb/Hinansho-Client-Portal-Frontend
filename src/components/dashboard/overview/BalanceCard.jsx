@@ -83,15 +83,72 @@ export default function BalanceCard() {
           value={`${(data?.totalLandSqm ?? 0).toLocaleString()} sqm`}
           dark icon={<LuWallet />} loading={loading}
         />
-        <SummaryCard
+        {/* <SummaryCard
           title="RENTAL INCOME"
           value={formatCurrency(0)}
           dark icon={<PiBuildingsBold />} loading={false}
-        />
-        <SummaryCard
-          title="AGRO RETURNS"
-          value={formatCurrency(0)}
-          dark icon={<LuLeaf />} loading={false}
+        /> */}
+        <div className="rounded-2xl px-6 pt-[24px] pb-[28px] bg-[#0F172B] text-white">
+          <div className="flex items-center justify-between gap-4">
+            
+            {/* Rental income */}
+            <div>
+              <div className="text-[25px] p-3 inline-block mb-2 bg-[#FFFFFF33] rounded-[10px]">
+                <PiBuildingsBold />
+              </div>
+
+              <p className="text-[14px] text-[#90A1B9] font-bold">
+                RENTAL INCOME
+              </p>
+
+              <h3 className="text-[20px] font-bold mt-1">
+                {loading ? (
+                  <span className="inline-block w-24 h-6 bg-white/20 rounded animate-pulse" />
+                ) : (
+                  formatCurrency(data?.rentalIncome ?? 0)
+                )}
+              </h3>
+            </div>
+
+            {/* Unit / SPV */}
+            <div className="border-l border-white/10 pl-5 min-w-[70px]">
+              <div className="mb-3">
+                <p className="text-[11px] text-[#90A1B9] font-bold uppercase">
+                  Unit
+                </p>
+
+                <p className="text-[18px] font-bold">
+                  {loading ? (
+                    <span className="inline-block w-8 h-5 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    data?.unitCount ?? 0
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[11px] text-[#90A1B9] font-bold uppercase">
+                  SPV
+                </p>
+
+                <p className="text-[18px] font-bold">
+                  {loading ? (
+                    <span className="inline-block w-8 h-5 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    data?.spvCount ?? 0
+                  )}
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <SummaryCard 
+          title="AGRO RETURNS" 
+          value={formatCurrency(data?.agroReturns ?? 0)} 
+          dark 
+          icon={<LuLeaf />} 
+          loading={loading} 
         />
       </div>
 
